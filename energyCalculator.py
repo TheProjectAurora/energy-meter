@@ -26,10 +26,11 @@ class energyCalculator:
         self.load_consumption_data()
 
         self.browser_process = None
+        self.node_process = None
         self.running = False
         self.consumption_metrics = {
-            "cpu_usage": [],
-            "memory_usage": [],
+            "cpu_usage_browser": [],
+            "memory_usage_browser": [],
             "network_io_initial": None,
             "network_io_final": None,
             "thread_start_time": time.time(),
@@ -49,6 +50,14 @@ class energyCalculator:
                              if proc.info['name'].lower() == 'chrome'), None)
         if not self.browser_process:
             print("Chromium process not found!")
+            return
+        
+        #node_processes = [p for p in psutil.process_iter(['pid', 'cmdline']) if 'node' in p.info.get('cmdline', [])]
+        #print(psutil.process_iter(['pid', 'cmdline']))
+        self.node_process = next(proc for proc in psutil.process_iter(['pid', 'cmdline'])
+                             if 'node' in proc.info.get('cmdline', []))
+        if not self.node_process:
+            print("Node process not found!")
             return
 
         self.running = True
@@ -73,12 +82,12 @@ class energyCalculator:
         self.consumption_metrics["network_io_final"] = psutil.net_io_counters()
 
     def record_cpu_consumption(self):
-        cpu_usage = self.browser_process.cpu_percent(interval=0.1)
-        self.consumption_metrics["cpu_usage"].append(cpu_usage)
+        cpu_usage_browser = self.browser_process.cpu_percent(interval=0.1)
+        self.consumption_metrics["cpu_usage_browser"].append(cpu_usage_browser)
 
     def record_memory_consumption(self):
-        memory_usage = self.browser_process.memory_info().rss / (1024 * 1024)  # Convert to MB
-        self.consumption_metrics["memory_usage"].append(memory_usage)
+        memory_usage_browser = self.browser_process.memory_info().rss / (1024 * 1024)  # Convert to MB
+        self.consumption_metrics["memory_usage_browser"].append(memory_usage_browser)
 
     def calculate_consumption(self):
         self.consumption_metrics["thread_execution_time"] = time.time() - self.consumption_metrics["thread_start_time"]
@@ -86,8 +95,8 @@ class energyCalculator:
 
     def print_consumption_results(self):
         # Calculate average CPU and Memory consumption
-        average_cpu_usage = sum(self.consumption_metrics["cpu_usage"]) / len(self.consumption_metrics["cpu_usage"]) if self.consumption_metrics["cpu_usage"] else 0
-        average_memory_usage = sum(self.consumption_metrics["memory_usage"]) / len(self.consumption_metrics["memory_usage"]) if self.consumption_metrics["memory_usage"] else 0
+        average_cpu_usage_browser = sum(self.consumption_metrics["cpu_usage_browser"]) / len(self.consumption_metrics["cpu_usage_browser"]) if self.consumption_metrics["cpu_usage_browser"] else 0
+        average_memory_usage_browser = sum(self.consumption_metrics["memory_usage_browser"]) / len(self.consumption_metrics["memory_usage_browser"]) if self.consumption_metrics["memory_usage_browser"] else 0
         total_time = self.consumption_metrics["thread_execution_time"]
         
         # Calculate network usage
@@ -95,8 +104,8 @@ class energyCalculator:
         bytes_received = self.consumption_metrics["network_io_final"].bytes_recv - self.consumption_metrics["network_io_initial"].bytes_recv
 
         #calculate energy consumptions
-        cpu_consumption = average_cpu_usage/100 * self.consumption_data['processor'][self.processor]* total_time
-        memory_consumption = average_memory_usage * self.consumption_data['ram'][self.ram] * total_time
+        cpu_consumption = average_cpu_usage_browser/100 * self.consumption_data['processor'][self.processor]* total_time
+        memory_consumption = average_memory_usage_browser * self.consumption_data['ram'][self.ram] * total_time
         network_consumption = (bytes_sent + bytes_received)/1024/1024 * self.consumption_data['network']
         total_consumption = cpu_consumption + memory_consumption + network_consumption
 

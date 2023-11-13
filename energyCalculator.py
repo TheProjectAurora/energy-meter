@@ -32,6 +32,7 @@ class energyCalculator:
             "cpu_usage_browser": [],
             "cpu_usage_node": [],
             "memory_usage_browser": [],
+            "memory_usage_node": [],
             "network_io_initial": None,
             "network_io_final": None,
             "thread_start_time": time.time(),

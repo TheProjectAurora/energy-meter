@@ -25,33 +25,6 @@ class energyCalculator(object):
         with open('consumptions.json') as f:
             self.data = json.load(f)
 
-    def _measure_consumption(self):
-        self.process.cpu_percent(interval=None)
-        self.initial_net_io = psutil.net_io_counters()
-        while self.running:
-            self._cpu_consumption()
-            self._memory_consumption()
-            time.sleep(0.01)
-        self.final_net_io = psutil.net_io_counters()
-
-    def _cpu_consumption(self):
-        cpu_usage = self.process.cpu_percent(interval=0.1)
-        self.cpu_usage_list.append(cpu_usage)
-        self.cpu_usage_sum += cpu_usage
-        self.cpu_usage_count += 1
-
-    def _memory_consumption(self):
-        memory_usage = self.process.memory_info().rss
-        self.memory_usage_list.append(memory_usage)
-        self.memory_usage_sum += memory_usage
-        self.memory_usage_count += 1
-
-    def _network_consumption(self):
-        memory_usage = self.process.memory_info().rss
-        self.memory_usage_list.append(memory_usage)
-        self.memory_usage_sum += memory_usage
-        self.memory_usage_count += 1
-
     def start_test(self, name, attributes):
         for proc in psutil.process_iter(['pid', 'name']):
             if 'chrome' == proc.info['name'].lower():
@@ -80,6 +53,28 @@ class energyCalculator(object):
         print(f"CPU-kuorman kulutus(Ws): {average_cpu_consumption_Ws:.2f} Ws")
         print(f"Muistikuorman kulutus(Ws): {average_memory_consumption_Ws:.2f} Ws")
         print(f"Verkkokuorma (Ws): {network_consumption_W:.2f} Ws")
+
+    def _measure_consumption(self):
+        self.process.cpu_percent(interval=None)
+        self.initial_net_io = psutil.net_io_counters()
+
+        while self.running:
+            self._cpu_consumption()
+            self._memory_consumption()
+            time.sleep(0.01)
+        self.final_net_io = psutil.net_io_counters()
+
+    def _cpu_consumption(self):
+        cpu_usage = self.process.cpu_percent(interval=0.1)
+        self.cpu_usage_list.append(cpu_usage)
+        self.cpu_usage_sum += cpu_usage
+        self.cpu_usage_count += 1
+
+    def _memory_consumption(self):
+        memory_usage = self.process.memory_info().rss
+        self.memory_usage_list.append(memory_usage)
+        self.memory_usage_sum += memory_usage
+        self.memory_usage_count += 1
 
     def _cpu_e_consumption(self):
         average_cpu_usage = self.cpu_usage_sum / self.cpu_usage_count if self.cpu_usage_count else 0

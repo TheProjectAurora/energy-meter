@@ -30,6 +30,7 @@ class energyCalculator:
         self.running = False
         self.consumption_metrics = {
             "cpu_usage_browser": [],
+            "cpu_usage_node": [],
             "memory_usage_browser": [],
             "network_io_initial": None,
             "network_io_final": None,
@@ -52,8 +53,6 @@ class energyCalculator:
             print("Chromium process not found!")
             return
         
-        #node_processes = [p for p in psutil.process_iter(['pid', 'cmdline']) if 'node' in p.info.get('cmdline', [])]
-        #print(psutil.process_iter(['pid', 'cmdline']))
         self.node_process = next(proc for proc in psutil.process_iter(['pid', 'cmdline'])
                              if 'node' in proc.info.get('cmdline', []))
         if not self.node_process:
@@ -83,7 +82,9 @@ class energyCalculator:
 
     def record_cpu_consumption(self):
         cpu_usage_browser = self.browser_process.cpu_percent(interval=0.1)
+        cpu_usage_node = self.node_process.cpu_percent(interval=0.1)
         self.consumption_metrics["cpu_usage_browser"].append(cpu_usage_browser)
+        self.consumption_metrics["cpu_usage_node"].append(cpu_usage_node)
 
     def record_memory_consumption(self):
         memory_usage_browser = self.browser_process.memory_info().rss / (1024 * 1024)  # Convert to MB
@@ -96,6 +97,7 @@ class energyCalculator:
     def print_consumption_results(self):
         # Calculate average CPU and Memory consumption
         average_cpu_usage_browser = sum(self.consumption_metrics["cpu_usage_browser"]) / len(self.consumption_metrics["cpu_usage_browser"]) if self.consumption_metrics["cpu_usage_browser"] else 0
+        average_cpu_usage_node = sum(self.consumption_metrics["cpu_usage_node"]) / len(self.consumption_metrics["cpu_usage_node"]) if self.consumption_metrics["cpu_usage_node"] else 0
         average_memory_usage_browser = sum(self.consumption_metrics["memory_usage_browser"]) / len(self.consumption_metrics["memory_usage_browser"]) if self.consumption_metrics["memory_usage_browser"] else 0
         total_time = self.consumption_metrics["thread_execution_time"]
         
@@ -104,15 +106,21 @@ class energyCalculator:
         bytes_received = self.consumption_metrics["network_io_final"].bytes_recv - self.consumption_metrics["network_io_initial"].bytes_recv
 
         #calculate energy consumptions
-        cpu_consumption = average_cpu_usage_browser/100 * self.consumption_data['processor'][self.processor]* total_time
+        browser_cpu_consumption = average_cpu_usage_browser/100 * self.consumption_data['processor'][self.processor]* total_time
+        node_cpu_consumption = average_cpu_usage_node/100 * self.consumption_data['processor'][self.processor]* total_time
         memory_consumption = average_memory_usage_browser * self.consumption_data['ram'][self.ram] * total_time
         network_consumption = (bytes_sent + bytes_received)/1024/1024 * self.consumption_data['network']
-        total_consumption = cpu_consumption + memory_consumption + network_consumption
+        total_consumption = browser_cpu_consumption + node_cpu_consumption + memory_consumption + network_consumption
 
         # Print the results
         print("")
         print(color.CYAN + f"Energy Consumption Results: {total_consumption:.2f} Ws" + color.END)
         print("")
-        print(f"Average CPU Consumption: {cpu_consumption:.2f} Ws")
+        print("Frontend")
+        print(f"Average Browser CPU Consumption: {browser_cpu_consumption:.2f} Ws")
         print(f"Average Memory Consumption: {memory_consumption:.2f} Ws")
+        print("")
+        print("Backend")
+        print(f"Average Node CPU Consumption: {node_cpu_consumption:.2f} Ws")
+        print("")
         print(f"Average Network Consumption: {network_consumption:.2f} Ws")

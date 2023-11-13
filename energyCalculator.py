@@ -25,7 +25,7 @@ class energyCalculator:
         self.ram = ram
         self.load_consumption_data()
 
-        self.process = None
+        self.browser_process = None
         self.running = False
         self.consumption_metrics = {
             "cpu_usage": [],
@@ -45,9 +45,9 @@ class energyCalculator:
             self.consumption_data = {}
 
     def start_test(self, name, attributes):
-        self.process = next((proc for proc in psutil.process_iter(['pid', 'name'])
+        self.browser_process = next((proc for proc in psutil.process_iter(['pid', 'name'])
                              if proc.info['name'].lower() == 'chrome'), None)
-        if not self.process:
+        if not self.browser_process:
             print("Chromium process not found!")
             return
 
@@ -56,7 +56,7 @@ class energyCalculator:
         self.thread.start()
 
     def end_test(self, name, attributes):
-        if not self.process:
+        if not self.browser_process:
             return
 
         self.running = False
@@ -73,11 +73,11 @@ class energyCalculator:
         self.consumption_metrics["network_io_final"] = psutil.net_io_counters()
 
     def record_cpu_consumption(self):
-        cpu_usage = self.process.cpu_percent(interval=0.1)
+        cpu_usage = self.browser_process.cpu_percent(interval=0.1)
         self.consumption_metrics["cpu_usage"].append(cpu_usage)
 
     def record_memory_consumption(self):
-        memory_usage = self.process.memory_info().rss / (1024 * 1024)  # Convert to MB
+        memory_usage = self.browser_process.memory_info().rss / (1024 * 1024)  # Convert to MB
         self.consumption_metrics["memory_usage"].append(memory_usage)
 
     def calculate_consumption(self):

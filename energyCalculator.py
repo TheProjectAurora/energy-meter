@@ -6,7 +6,7 @@ import json
 class energyCalculator(object):
     ROBOT_LISTENER_API_VERSION = 3
 
-    def __init__(self, processor='i9-12900KS', ram='ddr4'):
+    def __init__(self, processor='i7-8650U', ram='ddr4'):
         self.process = None
         self.running = False
         self.processor = processor
@@ -54,7 +54,7 @@ class energyCalculator(object):
 
     def start_test(self, name, attributes):
         for proc in psutil.process_iter(['pid', 'name']):
-            if 'chrome' in proc.info['name'].lower():
+            if 'chrome' == proc.info['name'].lower():
                 self.process = psutil.Process(proc.info['pid'])
                 break
         if not self.process:

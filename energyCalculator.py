@@ -3,93 +3,107 @@ import time
 import threading
 import json
 
-class energyCalculator(object):
+
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
+
+
+class energyCalculator:    
     ROBOT_LISTENER_API_VERSION = 3
 
-    def __init__(self, processor='i7-8650U', ram='ddr4'):
+    def __init__(self, processor='i9-12900KS', ram='ddr4'):
+        self.processor = processor
+        self.ram = ram
+        self.load_consumption_data()
+
         self.process = None
         self.running = False
-        self.processor = processor
-        self.ram = ram 
-        self.thread_start_time = 0
-        self.cpu_usage_sum = 0
-        self.cpu_usage_count = 0
-        self.cpu_usage_list = []
-        self.thread_start_time = time.time()
-        self.memory_usage = 0
-        self.memory_usage_sum = 0
-        self.memory_usage_count = 0
-        self.memory_usage_list = []
-        self.network_cosummption_per_MB = 1.76
+        self.consumption_metrics = {
+            "cpu_usage": [],
+            "memory_usage": [],
+            "network_io_initial": None,
+            "network_io_final": None,
+            "thread_start_time": time.time(),
+            "thread_execution_time": 0
+        }
 
-        with open('consumptions.json') as f:
-            self.data = json.load(f)
+    def load_consumption_data(self):
+        try:
+            with open('consumptions.json') as f:
+                self.consumption_data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error loading consumption data: {e}")
+            self.consumption_data = {}
 
     def start_test(self, name, attributes):
-        for proc in psutil.process_iter(['pid', 'name']):
-            if 'chrome' == proc.info['name'].lower():
-                self.process = psutil.Process(proc.info['pid'])
-                break
+        self.process = next((proc for proc in psutil.process_iter(['pid', 'name'])
+                             if proc.info['name'].lower() == 'chrome'), None)
         if not self.process:
-            print("Chromium-prosessia ei löytynyt!")
+            print("Chromium process not found!")
             return
+
         self.running = True
-        self.thread = threading.Thread(target=self._measure_consumption)
+        self.thread = threading.Thread(target=self.measure_consumption)
         self.thread.start()
 
     def end_test(self, name, attributes):
         if not self.process:
             return
+
         self.running = False
         self.thread.join()
-        self.thread_execution_time = time.time() - self.thread_start_time
-        average_cpu_consumption_Ws = self._cpu_e_consumption()
-        average_memory_consumption_Ws = self._memory_e_consumption()
-        network_consumption_W = self._network_e_consumption()
+        self.calculate_consumption()
+        self.print_consumption_results()  # Call print results at the end of the test
 
-        print("")
-        print(f"Ajon kokonaiskulutus Ws: {average_cpu_consumption_Ws + average_memory_consumption_Ws + network_consumption_W :.2f} Ws")
-        print("")
-        print(f"CPU-kuorman kulutus(Ws): {average_cpu_consumption_Ws:.2f} Ws")
-        print(f"Muistikuorman kulutus(Ws): {average_memory_consumption_Ws:.2f} Ws")
-        print(f"Verkkokuorma (Ws): {network_consumption_W:.2f} Ws")
-
-    def _measure_consumption(self):
-        self.process.cpu_percent(interval=None)
-        self.initial_net_io = psutil.net_io_counters()
-
+    def measure_consumption(self):
+        self.consumption_metrics["network_io_initial"] = psutil.net_io_counters()
         while self.running:
-            self._cpu_consumption()
-            self._memory_consumption()
+            self.record_cpu_consumption()
+            self.record_memory_consumption()
             time.sleep(0.01)
-        self.final_net_io = psutil.net_io_counters()
+        self.consumption_metrics["network_io_final"] = psutil.net_io_counters()
 
-    def _cpu_consumption(self):
+    def record_cpu_consumption(self):
         cpu_usage = self.process.cpu_percent(interval=0.1)
-        self.cpu_usage_list.append(cpu_usage)
-        self.cpu_usage_sum += cpu_usage
-        self.cpu_usage_count += 1
+        self.consumption_metrics["cpu_usage"].append(cpu_usage)
 
-    def _memory_consumption(self):
-        memory_usage = self.process.memory_info().rss
-        self.memory_usage_list.append(memory_usage)
-        self.memory_usage_sum += memory_usage
-        self.memory_usage_count += 1
+    def record_memory_consumption(self):
+        memory_usage = self.process.memory_info().rss / (1024 * 1024)  # Convert to MB
+        self.consumption_metrics["memory_usage"].append(memory_usage)
 
-    def _cpu_e_consumption(self):
-        average_cpu_usage = self.cpu_usage_sum / self.cpu_usage_count if self.cpu_usage_count else 0
-        average_cpu_consumption_Ws = (average_cpu_usage/100) * self.data['processor'][self.processor] * self.thread_execution_time
-        return average_cpu_consumption_Ws
+    def calculate_consumption(self):
+        self.consumption_metrics["thread_execution_time"] = time.time() - self.consumption_metrics["thread_start_time"]
+        # Add more calculation logic if necessary
 
-    def _memory_e_consumption(self):
-        average_memory_usage = (self.memory_usage_sum/1024/1024) / self.memory_usage_count if self.memory_usage_count else 0
-        average_memory_consumption_W = average_memory_usage * self.data['ram']['ddr4']
-        average_memory_consumption_Ws = average_memory_consumption_W * self.thread_execution_time
-        return average_memory_consumption_Ws
+    def print_consumption_results(self):
+        # Calculate average CPU and Memory consumption
+        average_cpu_usage = sum(self.consumption_metrics["cpu_usage"]) / len(self.consumption_metrics["cpu_usage"]) if self.consumption_metrics["cpu_usage"] else 0
+        average_memory_usage = sum(self.consumption_metrics["memory_usage"]) / len(self.consumption_metrics["memory_usage"]) if self.consumption_metrics["memory_usage"] else 0
+        total_time = self.consumption_metrics["thread_execution_time"]
+        
+        # Calculate network usage
+        bytes_sent = self.consumption_metrics["network_io_final"].bytes_sent - self.consumption_metrics["network_io_initial"].bytes_sent
+        bytes_received = self.consumption_metrics["network_io_final"].bytes_recv - self.consumption_metrics["network_io_initial"].bytes_recv
 
-    def _network_e_consumption(self):
-        bytes_sent = self.final_net_io.bytes_sent - self.initial_net_io.bytes_sent
-        bytes_received = self.final_net_io.bytes_recv - self.initial_net_io.bytes_recv
-        bytes_sum = bytes_sent + bytes_received
-        network_consumption_W = bytes_sum/1024/1024 * self.network_cosummption_per_MB
-        return network_consumption_W
+        #calculate energy consumptions
+        cpu_consumption = average_cpu_usage/100 * self.consumption_data['processor'][self.processor]* total_time
+        memory_consumption = average_memory_usage * self.consumption_data['ram'][self.ram] * total_time
+        network_consumption = (bytes_sent + bytes_received)/1024/1024 * self.consumption_data['network']
+        total_consumption = cpu_consumption + memory_consumption + network_consumption
+
+        # Print the results
+        print("")
+        print(color.CYAN + f"Energy Consumption Results: {total_consumption:.2f} Ws" + color.END)
+        print("")
+        print(f"Average CPU Consumption: {cpu_consumption:.2f} Ws")
+        print(f"Average Memory Consumption: {memory_consumption:.2f} Ws")
+        print(f"Average Network Consumption: {network_consumption:.2f} Ws")

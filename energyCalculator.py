@@ -55,7 +55,7 @@ class energyCalculator:
             return
         
         self.node_process = next(proc for proc in psutil.process_iter(['pid', 'cmdline'])
-                             if 'node' in proc.info.get('cmdline', []))
+                             if 'node' and 'index.js' in proc.info.get('cmdline', []))
         if not self.node_process:
             print("Node process not found!")
             return

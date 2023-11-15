@@ -23,8 +23,8 @@ Open Browser
 
 Go to Season Greetings page with image
     New Page   http://localhost:3000/index.html   
-    Set Viewport Size   1920    1080
+    Set Viewport Size   1200    1200
 
 Go to Season Greetings page with video
     New Page   http://localhost:3000/index2.html
-    Set Viewport Size   1920    1080
+    Set Viewport Size   1200    1200

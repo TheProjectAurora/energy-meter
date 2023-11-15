@@ -10,11 +10,11 @@ ${HEADLESS}    False
 * Test Cases *
 Go to Season Greetings video
     Go to Season Greetings page with video
-    Sleep    3s
+    Sleep    2s
 
 Go to Season Greetings image
     Go to Season Greetings page with    picture
-    Sleep    3s
+    Sleep    2s
 
 
 * Keywords *

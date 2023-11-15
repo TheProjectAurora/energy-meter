@@ -20,7 +20,7 @@ class color:
 class energyCalculator:    
     ROBOT_LISTENER_API_VERSION = 3
 
-    def __init__(self, processor='i9-12900KS', ram='ddr4'):
+    def __init__(self, processor='i7-8650U', ram='ddr4'):
         self.processor = processor
         self.ram = ram
         self.load_consumption_data()

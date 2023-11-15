@@ -1,12 +1,29 @@
 html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #F0F0F0; /* Or any color that suits your design */
+}
+/* Common styles for both GIF and JPEG images */
+#greetingsGif, #greetingsImage {
+  display: block; /* Replaces inline styles and ensures the image is block-level */
+  max-width: calc(100% - 20px); /* 100px margin on each side */
+  max-height: calc(100vh - 20px); /* 100px margin on the top and bottom */
+  width: auto; /* Maintain aspect ratio */
+  height: auto; /* Maintain aspect ratio */
+  margin: 100px auto; /* Ensures the margin is auto for left and right */
+}
+/* Specific styles for the GIF to ensure it fits within the specified area */
+#greetingsGif {
+  object-fit: contain; /* This will ensure that the GIF is scaled down to fit within the box, if necessary, without distorting its aspect ratio */
+}
+@media screen and (max-width: 400px) {
+  #greetingsGif, #greetingsImage {
+    margin: 50px auto; /* Smaller margin for very narrow screens */
+    max-width: calc(100% - 100px); /* Adjust max-width accordingly */
+    max-height: calc(100vh - 100px); /* Adjust max-height accordingly */
   }
-
-  video {
-    width: 100%;
-    height: auto;
-  }
+}

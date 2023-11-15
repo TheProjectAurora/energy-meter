@@ -8,9 +8,7 @@
 </head>
 <body>
 
-
-
-<img id="greetingsImage" src="img/santa.jpeg" style="display:none;">
+<img id="greetingsImage" src="img/santa.png" style="display:none;">
 
 <script>
   // Function to get URL parameters
@@ -23,15 +21,7 @@
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 
-  // Get the 'media' parameter from the URL
-  var mediaType = getParameterByName('media'); // e.g., 'video' or 'picture'
-
-  // Show the video or picture based on the 'media' parameter, default to video
-  if(mediaType === 'picture') {
       document.getElementById('greetingsImage').style.display = 'block';
-  } //else {
-    //  document.getElementById('greetingsGif').style.display = 'block';
-  //}
 </script>
 
 </body>

@@ -13,20 +13,23 @@ Go to Season Greetings video
     Sleep    2s
 
 Go to Season Greetings image
+<<<<<<< HEAD
     Go to Season Greetings page with    picture
     Sleep    2s
+=======
+    Go to Season Greetings page with image
+    Sleep    3s
+>>>>>>> 08132ce (changed files)
 
 
 * Keywords *
 Open Browser
     New Browser  headless=${HEADLESS}
 
-
-Go to Season Greetings page with
-    [Arguments]  ${media}
-    New Page   ${URL}?media=${media}
-    Set Viewport Size   2560    1360
+Go to Season Greetings page with image
+    New Page   http://localhost:3000/index.html   
+    Set Viewport Size   1920    1080
 
 Go to Season Greetings page with video
-    New Page   http://localhost:3000/index2.html?media=video
-    Set Viewport Size   2560    1360
+    New Page   http://localhost:3000/index2.html
+    Set Viewport Size   1920    1080

@@ -8,10 +8,7 @@
 </head>
 <body>
 
-<video id="greetingsVideo" autoplay loop muted playsinline style="display:none;">
-  <source src="video/santa.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+
 
 <img id="greetingsImage" src="img/santa.jpeg" style="display:none;">
 
@@ -32,9 +29,9 @@
   // Show the video or picture based on the 'media' parameter, default to video
   if(mediaType === 'picture') {
       document.getElementById('greetingsImage').style.display = 'block';
-  } else {
-      document.getElementById('greetingsVideo').style.display = 'block';
-  }
+  } //else {
+    //  document.getElementById('greetingsGif').style.display = 'block';
+  //}
 </script>
 
 </body>

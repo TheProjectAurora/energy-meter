@@ -6,3 +6,4 @@ playwright-log.txt
 SUT/node_modules/
 SUT/package-lock.json
 SUT/package.json
+*.Identifier

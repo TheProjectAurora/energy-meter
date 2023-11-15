@@ -59,7 +59,7 @@ class energyCalculator:
         if not self.node_process:
             print("Node process not found!")
             return
-
+        
         self.running = True
         self.thread = threading.Thread(target=self.measure_consumption)
         self.thread.start()
@@ -74,12 +74,13 @@ class energyCalculator:
         self.print_consumption_results()  # Call print results at the end of the test
 
     def measure_consumption(self):
-        self.consumption_metrics["network_io_initial"] = psutil.net_io_counters()
+        self.consumption_metrics["network_io_initial"] = psutil.net_io_counters() #pernic=True)['lo']
         while self.running:
             self.record_cpu_consumption()
             self.record_memory_consumption()
             time.sleep(0.01)
-        self.consumption_metrics["network_io_final"] = psutil.net_io_counters()
+        self.consumption_metrics["network_io_final"] = psutil.net_io_counters() #pernic=True)['lo']
+
 
     def record_cpu_consumption(self):
         cpu_usage_browser = self.browser_process.cpu_percent(interval=0.1)
@@ -130,4 +131,5 @@ class energyCalculator:
         print(f"Average Node CPU Consumption: {node_cpu_consumption:.2f} Ws")
         print(f"Average Memory Consumption: {node_memory_consumption:.2f} Ws")
         print("")
-        print(f"Average Network Consumption: {network_consumption:.2f} Ws")
+        print(f"Network Consumption: {network_consumption:.2f} Ws")
+        self.__init__()

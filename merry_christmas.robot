@@ -13,13 +13,8 @@ Go to Season Greetings video
     Sleep    2s
 
 Go to Season Greetings image
-<<<<<<< HEAD
-    Go to Season Greetings page with    picture
-    Sleep    2s
-=======
     Go to Season Greetings page with image
-    Sleep    3s
->>>>>>> 08132ce (changed files)
+    Sleep    2s
 
 
 * Keywords *

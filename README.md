@@ -51,8 +51,7 @@ For a web page containing two images - one static and one a moving GIF - the lis
 
 ## Output
 At the end of the test execution, the script prints out a detailed report of the energy consumption, including CPU, memory, and network usage for both the frontend (browser) and backend (Node.js) processes.
-![Screenshot 2023-11-28 144440](https://github.com/NorthCodeLtd/energy_calculator/assets/1047173/0c210ebb-3548-40b6-b1d2-a00553b9e895)
-
+![Screenshot 2023-11-28 115605](https://github.com/NorthCodeLtd/energy_calculator/assets/1047173/fbb79fea-1fad-45dc-b824-ab7c38e70e25)
 
 ## Contributing
 Contributions to enhance energyCalculator.py are welcome. Please submit your pull requests or issues to the repository.

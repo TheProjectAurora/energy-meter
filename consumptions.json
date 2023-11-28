@@ -1,7 +1,7 @@
 {
   "processor": {
     "m1" : 39.0,
-    "i9-12900KS" : 150,
+    "12th Gen Intel(R) Core(TM) i9-12900K" : 150,
     "i7-8650U": 15
   },
   "ram": {

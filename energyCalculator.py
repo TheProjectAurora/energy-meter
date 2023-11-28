@@ -2,7 +2,9 @@ import psutil
 import time
 import threading
 import json
-
+import platform
+import os
+#import wmi
 
 class color:
    PURPLE = '\033[95m'
@@ -20,8 +22,8 @@ class color:
 class energyCalculator:    
     ROBOT_LISTENER_API_VERSION = 3
 
-    def __init__(self, processor='i7-8650U', ram='ddr4'):
-        self.processor = processor
+    def __init__(self, ram='ddr4'):
+        self.processor = self.get_cpu_info()
         self.ram = ram
         self.load_consumption_data()
 
@@ -38,6 +40,33 @@ class energyCalculator:
             "thread_start_time": time.time(),
             "thread_execution_time": 0
         }
+    
+    def get_cpu_info(self):
+        try:
+            # Check for Windows
+            if platform.system() == "Windows":
+                c = wmi.WMI()
+                cpus = [cpu.Name.strip() for cpu in c.Win32_Processor()]
+                return ', '.join(cpus) if cpus else "Unknown"
+
+            # Check for Linux
+            elif platform.system() == "Linux":
+                with open('/proc/cpuinfo') as f:
+                    for line in f:
+                        if "model name" in line:
+                            return line.split(":")[1].strip()
+                return "Unknown"
+
+            # Check for macOS
+            elif platform.system() == "Darwin":
+                return os.popen("sysctl -n machdep.cpu.brand_string").read().strip()
+
+            else:
+                return "Unknown Operating System"
+
+        except Exception as e:
+            return str(e)
+
 
     def load_consumption_data(self):
         try:
@@ -129,6 +158,13 @@ class energyCalculator:
         bytes_received = self.consumption_metrics["network_io_final"].bytes_recv - self.consumption_metrics["network_io_initial"].bytes_recv
 
         #calculate energy consumptions
+        try:
+            self.consumption_data['processor'][self.processor]
+        except KeyError:
+            print("")
+            print(f"Processor {self.processor} not found in consumption data. Using default value of 100 Ws. Add it to the consumption data to consumption.json to get more accurate results.")
+            self.consumption_data['processor'][self.processor] = 100
+    
         browser_cpu_consumption = average_cpu_usage_browser/100 * self.consumption_data['processor'][self.processor]* total_time
         node_cpu_consumption = average_cpu_usage_node/100 * self.consumption_data['processor'][self.processor]* total_time
         browser_memory_consumption = average_memory_usage_browser * self.consumption_data['ram'][self.ram] * total_time

@@ -77,6 +77,7 @@ class energyCalculator:
             self.consumption_data = {}
 
     def start_test(self, name, attributes):
+        self.__init__()
         self.browser_process = next((proc for proc in psutil.process_iter(['pid', 'name'])
                              if proc.info['name'].lower() == 'chrome'), None)
         if not self.browser_process:
@@ -132,18 +133,17 @@ class energyCalculator:
 
         # Print the results
         print("")
-        print(color.CYAN + f"Energy Consumption Results: {consumptions['total_consumption']:.2f} Ws" + color.END)
+        print(color.CYAN + f"🌱 Energy Consumption Results: {consumptions['total_consumption']:.2f} Ws 🌱" + color.END)
         print("")
         print("Frontend")
-        print(f"Browser CPU Consumption: {consumptions['browser_cpu_consumption']:.2f} Ws")
-        print(f"Browser Memory Consumption: {consumptions['browser_memory_consumption']:.2f} Ws")
+        print(f"💻 Browser CPU Consumption: {consumptions['browser_cpu_consumption']:.2f} Ws")
+        print(f"💭 Browser Memory Consumption: {consumptions['browser_memory_consumption']:.2f} Ws")
         print("")
         print("Backend")
-        print(f"Node CPU Consumption: {consumptions['node_cpu_consumption']:.2f} Ws")
-        print(f"Node Memory Consumption: {consumptions['node_memory_consumption']:.2f} Ws")
+        print(f"💻 Node CPU Consumption: {consumptions['node_cpu_consumption']:.2f} Ws")
+        print(f"💭 Node Memory Consumption: {consumptions['node_memory_consumption']:.2f} Ws")
         print("")
-        print(f"Network Consumption: {consumptions['network_consumption']:.2f} Ws")
-        self.__init__()
+        print(f"🌍 Network Consumption: {consumptions['network_consumption']:.2f} Ws")
 
     def get_consumption(self):
         # Calculate average CPU and Memory consumption

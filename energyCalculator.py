@@ -99,6 +99,24 @@ class energyCalculator:
         # Add more calculation logic if necessary
 
     def print_consumption_results(self):
+        consumptions = self.get_consumption()
+
+        # Print the results
+        print("")
+        print(color.CYAN + f"Energy Consumption Results: {consumptions['total_consumption']:.2f} Ws" + color.END)
+        print("")
+        print("Frontend")
+        print(f"Browser CPU Consumption: {consumptions['browser_cpu_consumption']:.2f} Ws")
+        print(f"Browser Memory Consumption: {consumptions['browser_memory_consumption']:.2f} Ws")
+        print("")
+        print("Backend")
+        print(f"Node CPU Consumption: {consumptions['node_cpu_consumption']:.2f} Ws")
+        print(f"Node Memory Consumption: {consumptions['node_memory_consumption']:.2f} Ws")
+        print("")
+        print(f"Network Consumption: {consumptions['network_consumption']:.2f} Ws")
+        self.__init__()
+
+    def get_consumption(self):
         # Calculate average CPU and Memory consumption
         average_cpu_usage_browser = sum(self.consumption_metrics["cpu_usage_browser"]) / len(self.consumption_metrics["cpu_usage_browser"]) if self.consumption_metrics["cpu_usage_browser"] else 0
         average_cpu_usage_node = sum(self.consumption_metrics["cpu_usage_node"]) / len(self.consumption_metrics["cpu_usage_node"]) if self.consumption_metrics["cpu_usage_node"] else 0
@@ -118,18 +136,13 @@ class energyCalculator:
         
         network_consumption = (bytes_sent + bytes_received)/1024/1024 * self.consumption_data['network']
         total_consumption = browser_cpu_consumption + node_cpu_consumption + browser_memory_consumption + node_memory_consumption + network_consumption
-
-        # Print the results
-        print("")
-        print(color.CYAN + f"Energy Consumption Results: {total_consumption:.2f} Ws" + color.END)
-        print("")
-        print("Frontend")
-        print(f"Browser CPU Consumption: {browser_cpu_consumption:.2f} Ws")
-        print(f"Browser Memory Consumption: {browser_memory_consumption:.2f} Ws")
-        print("")
-        print("Backend")
-        print(f"Node CPU Consumption: {node_cpu_consumption:.2f} Ws")
-        print(f"Node Memory Consumption: {node_memory_consumption:.2f} Ws")
-        print("")
-        print(f"Network Consumption: {network_consumption:.2f} Ws")
-        self.__init__()
+        
+        consumptions = {
+            "total_consumption": total_consumption,
+            "browser_cpu_consumption": browser_cpu_consumption,
+            "node_cpu_consumption": node_cpu_consumption,
+            "browser_memory_consumption": browser_memory_consumption,
+            "node_memory_consumption": node_memory_consumption,
+            "network_consumption": network_consumption
+        }
+        return consumptions

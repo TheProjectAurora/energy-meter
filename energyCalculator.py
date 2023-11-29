@@ -4,7 +4,8 @@ import threading
 import json
 import platform
 import os
-#import wmi
+if platform.system() == 'Windows':
+    import wmi
 
 class color:
    CYAN = '\033[96m'

@@ -21,8 +21,8 @@ class energyCalculator:
         self.ram = ram
         self.load_consumption_data()
 
-        self.browser_process = None
-        self.node_process = None
+        self.browser_process = self.find_process('chrome')
+        self.node_process = self.find_process('node', 'index.js')
         self.running = False
         self.consumption_metrics = {
             "cpu_usage_browser": [],
@@ -45,24 +45,11 @@ class energyCalculator:
 
     def start_test(self, name, attributes):
         self.__init__()
-        self.browser_process = self.find_process('chrome')
-        if not self.browser_process:
-            print("Chromium process not found!")
-            return
-
-        self.node_process = self.find_process('node', 'index.js')
-        if not self.node_process:
-            print("Node process not found!")
-            return
-        
         self.running = True
         self.thread = threading.Thread(target=self.measure_consumption)
         self.thread.start()
 
     def end_test(self, name, attributes):
-        if not self.browser_process:
-            return
-
         self.running = False
         self.thread.join()
         self.calculate_consumption()
@@ -82,6 +69,7 @@ class energyCalculator:
                         return proc
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass  # Process has terminated or cannot be accessed
+        print(f"{process_name} process not found!")
         return None
 
     def get_cpu_info(self):

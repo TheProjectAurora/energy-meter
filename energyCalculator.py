@@ -33,8 +33,57 @@ class energyCalculator:
             "network_io_final": None,
             "thread_start_time": time.time(),
             "thread_execution_time": 0
-        }
+        }    
+
+    def load_consumption_data(self):
+        try:
+            with open('consumptions.json') as f:
+                self.consumption_data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"Error loading consumption data: {e}")
+            self.consumption_data = {}
+
+    def start_test(self, name, attributes):
+        self.__init__()
+        self.browser_process = self.find_process('chrome')
+        if not self.browser_process:
+            print("Chromium process not found!")
+            return
+
+        self.node_process = self.find_process('node', 'index.js')
+        if not self.node_process:
+            print("Node process not found!")
+            return
+        
+        self.running = True
+        self.thread = threading.Thread(target=self.measure_consumption)
+        self.thread.start()
+
+    def end_test(self, name, attributes):
+        if not self.browser_process:
+            return
+
+        self.running = False
+        self.thread.join()
+        self.calculate_consumption()
+        self.print_consumption_results()  # Call print results at the end of the test
     
+    def find_process(self, process_name, command=None):
+        """
+        Find a process by name. If a command is specified, it will be used for additional filtering.
+        """
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                if process_name.lower() in proc.info['name'].lower():
+                    if command:
+                        if command in proc.info.get('cmdline', []):
+                            return proc
+                    else:
+                        return proc
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass  # Process has terminated or cannot be accessed
+        return None
+
     def get_cpu_info(self):
         try:
             # Check for Windows
@@ -60,42 +109,6 @@ class energyCalculator:
 
         except Exception as e:
             return str(e)
-
-
-    def load_consumption_data(self):
-        try:
-            with open('consumptions.json') as f:
-                self.consumption_data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error loading consumption data: {e}")
-            self.consumption_data = {}
-
-    def start_test(self, name, attributes):
-        self.__init__()
-        self.browser_process = next((proc for proc in psutil.process_iter(['pid', 'name'])
-                             if proc.info['name'].lower() == 'chrome'), None)
-        if not self.browser_process:
-            print("Chromium process not found!")
-            return
-        
-        self.node_process = next(proc for proc in psutil.process_iter(['pid', 'cmdline'])
-                             if 'node' and 'index.js' in proc.info.get('cmdline', []))
-        if not self.node_process:
-            print("Node process not found!")
-            return
-        
-        self.running = True
-        self.thread = threading.Thread(target=self.measure_consumption)
-        self.thread.start()
-
-    def end_test(self, name, attributes):
-        if not self.browser_process:
-            return
-
-        self.running = False
-        self.thread.join()
-        self.calculate_consumption()
-        self.print_consumption_results()  # Call print results at the end of the test
 
     def measure_consumption(self):
         self.consumption_metrics["network_io_initial"] = psutil.net_io_counters() #pernic=True)['lo']
@@ -156,7 +169,8 @@ class energyCalculator:
             self.consumption_data['processor'][self.processor]
         except KeyError:
             print("")
-            print(f"Processor {self.processor} not found in consumption data. Using default value of 100 Ws. Add it to the consumption data to consumption.json to get more accurate results.")
+            print(f"Processor {self.processor} not found in consumption data. Using default value of 100 Ws.")
+            print(f"Add it to the consumption data to consumption.json to get more accurate results.")
             self.consumption_data['processor'][self.processor] = 100
     
         browser_cpu_consumption = average_cpu_usage_browser/100 * self.consumption_data['processor'][self.processor]* total_time

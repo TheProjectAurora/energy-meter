@@ -42,18 +42,6 @@ class energyCalculator:
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Error loading consumption data: {e}")
             self.consumption_data = {}
-
-    def start_test(self, name, attributes):
-        self.__init__()
-        self.running = True
-        self.thread = threading.Thread(target=self.measure_consumption)
-        self.thread.start()
-
-    def end_test(self, name, attributes):
-        self.running = False
-        self.thread.join()
-        self.calculate_consumption()
-        self.print_consumption_results()  # Call print results at the end of the test
     
     def find_process(self, process_name, command=None):
         """
@@ -97,6 +85,18 @@ class energyCalculator:
 
         except Exception as e:
             return str(e)
+
+    def start_test(self, name, attributes):
+        self.__init__()
+        self.running = True
+        self.thread = threading.Thread(target=self.measure_consumption)
+        self.thread.start()
+
+    def end_test(self, name, attributes):
+        self.running = False
+        self.thread.join()
+        self.calculate_consumption()
+        self.print_consumption_results()  # Call print results at the end of the test
 
     def measure_consumption(self):
         self.consumption_metrics["network_io_initial"] = psutil.net_io_counters() #pernic=True)['lo']

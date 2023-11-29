@@ -7,31 +7,28 @@ The `energyCalculator.py` is a custom listener for the Robot Framework, designed
 - Python 3.x
 - Robot Framework
 - `psutil` Python package
+- Node.js
 - For Windows users: `wmi` Python package
+
+## Starting the Node.js Service
+Before running tests with the Robot Framework, ensure that the Node.js service is up and running. You can start the service by running the following command in your project directory:
+
+```bash
+cd SUT
+node index.js
+```
+This will start the Node.js service. To confirm that the service is running, you can open a web browser and navigate to http://localhost:3000/. If the service is up, you should be able to see the webpage served by your Node.js application.
+
+Ensure that this service is running for the energyCalculator listener to monitor its performance during tests.
 
 ## Installation
 1. Ensure you have Python and Robot Framework installed on your system.
 2. Install the required Python packages:
-   # Energy Calculator for Robot Framework
-
-## Overview
-The `energyCalculator.py` is a custom listener for the Robot Framework, designed to monitor and calculate the energy consumption of specific processes during test execution. It focuses on tracking CPU and memory usage, as well as network I/O, for browser and Node.js processes.
-
-## Prerequisites
-- Python 3.x
-- Robot Framework
-- `psutil` Python package
-- For Windows users: `wmi` Python package
-
-## Installation
-1. Ensure you have Python and Robot Framework installed on your system.
-2. Install the required Python packages:
-   ```bash
-   pip install psutil
-   # For Windows users:
-   pip install wmi
-   ```
-
+```bash
+pip install psutil
+# For Windows users:
+pip install wmi
+```
 3. Download `energyCalculator.py` and place it in your project directory.
 
 ## Usage

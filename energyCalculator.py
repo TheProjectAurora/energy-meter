@@ -20,22 +20,12 @@ class energyCalculator:
 
     def __init__(self, ram='ddr4'):
         self.processor = self.get_cpu_info()
+        self.browser_process = None
+        self.node_process = None
         self.ram = ram
         self.load_consumption_data()
-
-        self.browser_process = self.find_process('chrome')
-        self.node_process = self.find_process('node', 'index.js')
         self.running = False
-        self.consumption_metrics = {
-            "cpu_usage_browser": [],
-            "cpu_usage_node": [],
-            "memory_usage_browser": [],
-            "memory_usage_node": [],
-            "network_io_initial": None,
-            "network_io_final": None,
-            "thread_start_time": time.time(),
-            "thread_execution_time": 0
-        }    
+        self.reset_consumption_metrics()
 
     def load_consumption_data(self):
         try:
@@ -89,10 +79,30 @@ class energyCalculator:
             return str(e)
 
     def start_test(self, name, attributes):
-        self.__init__()
+        self.reset_consumption_metrics()
+        self.ensure_process_are_started()
         self.running = True
         self.thread = threading.Thread(target=self.measure_consumption)
         self.thread.start()
+    
+    def ensure_process_are_started(self):
+        if not self.browser_process:
+            self.browser_process = self.find_process('chrome')
+        if not self.node_process:
+            self.node_process = self.find_process('node', 'index.js')
+
+    def reset_consumption_metrics(self):
+        # Reset or initialize metrics
+        self.consumption_metrics = {
+            "cpu_usage_browser": [],
+            "cpu_usage_node": [],
+            "memory_usage_browser": [],
+            "memory_usage_node": [],
+            "network_io_initial": None,
+            "network_io_final": None,
+            "thread_start_time": time.time(),
+            "thread_execution_time": 0
+        }     
 
     def end_test(self, name, attributes):
         self.running = False

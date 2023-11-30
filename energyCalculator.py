@@ -113,27 +113,28 @@ class energyCalculator:
     def measure_consumption(self):
         self.consumption_metrics["network_io_initial"] = psutil.net_io_counters() #pernic=True)['lo']
         while self.running:
-            self.record_cpu_consumption()
-            self.record_memory_consumption()
+            self.record_consumption_metrics()
             time.sleep(0.01)
         self.consumption_metrics["network_io_final"] = psutil.net_io_counters() #pernic=True)['lo']
 
+    def record_consumption_metrics(self):
+        self.record_total_consumption(self.browser_process, "browser")
+        self.record_total_consumption(self.node_process, "node")
 
-    def record_cpu_consumption(self):
-        cpu_usage_browser = self.browser_process.cpu_percent(interval=0.1)
-        cpu_usage_node = self.node_process.cpu_percent(interval=0.1)
-        self.consumption_metrics["cpu_usage_browser"].append(cpu_usage_browser)
-        self.consumption_metrics["cpu_usage_node"].append(cpu_usage_node)
+    def record_total_consumption(self, process, process_name):
+        self.record_memory_consumption(process, process_name)
+        self.record_cpu_consumption(process, process_name)
 
-    def record_memory_consumption(self):
-        memory_usage_browser = self.browser_process.memory_info().rss / (1024 * 1024)  # Convert to MB
-        memory_usage_node = self.node_process.memory_info().rss / (1024 * 1024)  # Convert to MB
-        self.consumption_metrics["memory_usage_browser"].append(memory_usage_browser)
-        self.consumption_metrics["memory_usage_node"].append(memory_usage_node)
+    def record_cpu_consumption(self, process, process_name):
+        cpu_usage = process.cpu_percent(interval=0.1)
+        self.consumption_metrics[f"cpu_usage_{process_name}"].append(cpu_usage)
+    
+    def record_memory_consumption(self, process, process_name):
+        memory_usage = process.memory_info().rss / (1024 * 1024)
+        self.consumption_metrics[f"memory_usage_{process_name}"].append(memory_usage)
 
     def calculate_consumption(self):
         self.consumption_metrics["thread_execution_time"] = time.time() - self.consumption_metrics["thread_start_time"]
-        # Add more calculation logic if necessary
 
     def print_consumption_results(self):
         consumptions = self.get_consumption()

@@ -155,41 +155,30 @@ class energyCalculator:
 
     def get_consumption(self):
         # Calculate average CPU and Memory consumption
-        #consumptions = {}
-        average_cpu_usage_browser = self.get_average_usage('browser', 'cpu_usage')
-        average_cpu_usage_node = self.get_average_usage('node', 'cpu_usage')
-        average_memory_usage_browser = self.get_average_usage('browser', 'memory_usage')
-        average_memory_usage_node = self.get_average_usage('node', 'memory_usage')
-
-        total_time = self.consumption_metrics["thread_execution_time"]
+        consumptions = {}
         
-        # Calculate network consumption
-        network_consumption = self.get_network_consumption()
-
-
-        #calculate energy consumptions
-        try:
-            processor_consumption = self.consumption_data['processor'][self.processor]
-        except KeyError:
-            print(f"\nProcessor {self.processor} not found. Using default value of {self.DEFAULT_PROCESSOR_CONSUMPTION} Ws.")
-            processor_consumption = self.DEFAULT_PROCESSOR_CONSUMPTION
-    
-        browser_cpu_consumption = average_cpu_usage_browser/100 * processor_consumption * total_time
-        node_cpu_consumption = average_cpu_usage_node/100 * processor_consumption * total_time
-        browser_memory_consumption = average_memory_usage_browser * self.consumption_data['ram'][self.ram] * total_time
-        node_memory_consumption = average_memory_usage_node * self.consumption_data['ram'][self.ram] * total_time
+        consumptions["browser_cpu_consumption"] =  self.consumption('browser', 'cpu_usage')
+        consumptions["node_cpu_consumption"] = self.consumption('node', 'cpu_usage')
+        consumptions["browser_memory_consumption"] = self.consumption('browser', 'memory_usage')
+        consumptions["node_memory_consumption"] = self.consumption('node', 'memory_usage')
+        consumptions['network_consumption'] = self.get_network_consumption()
+        consumptions['total_consumption'] =  consumptions["browser_cpu_consumption"] + consumptions["node_cpu_consumption"] + consumptions["browser_memory_consumption"] + consumptions["node_memory_consumption"] + consumptions['network_consumption']
         
-        total_consumption = browser_cpu_consumption + node_cpu_consumption + browser_memory_consumption + node_memory_consumption + network_consumption
-        
-        consumptions = {
-            "total_consumption": total_consumption,
-            "browser_cpu_consumption": browser_cpu_consumption,
-            "node_cpu_consumption": node_cpu_consumption,
-            "browser_memory_consumption": browser_memory_consumption,
-            "node_memory_consumption": node_memory_consumption,
-            "network_consumption": network_consumption
-        }
         return consumptions
+    
+    def consumption(self, process_name, usage_type):
+        if usage_type == 'cpu_usage':
+                    #calculate energy consumptions
+            try:
+                processor_consumption = self.consumption_data['processor'][self.processor]
+            except KeyError:
+                print(f"\nProcessor {self.processor} not found. Using default value of {self.DEFAULT_PROCESSOR_CONSUMPTION} Ws.")
+                processor_consumption = self.DEFAULT_PROCESSOR_CONSUMPTION
+            return self.get_average_usage(process_name, usage_type)/100 * processor_consumption * self.consumption_metrics["thread_execution_time"]
+            
+
+        elif usage_type == 'memory_usage':
+            return self.get_average_usage(process_name, usage_type) * self.consumption_data['ram'][self.ram] * self.consumption_metrics["thread_execution_time"]
     
     def get_average_usage(self, process_name, usage_type):
         usage = self.consumption_metrics[f"{usage_type}_{process_name}"]

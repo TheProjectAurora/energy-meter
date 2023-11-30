@@ -155,15 +155,17 @@ class energyCalculator:
 
     def get_consumption(self):
         # Calculate average CPU and Memory consumption
-        average_cpu_usage_browser = sum(self.consumption_metrics["cpu_usage_browser"]) / len(self.consumption_metrics["cpu_usage_browser"]) if self.consumption_metrics["cpu_usage_browser"] else 0
-        average_cpu_usage_node = sum(self.consumption_metrics["cpu_usage_node"]) / len(self.consumption_metrics["cpu_usage_node"]) if self.consumption_metrics["cpu_usage_node"] else 0
-        average_memory_usage_browser = sum(self.consumption_metrics["memory_usage_browser"]) / len(self.consumption_metrics["memory_usage_browser"]) if self.consumption_metrics["memory_usage_browser"] else 0
-        average_memory_usage_node = sum(self.consumption_metrics["memory_usage_node"]) / len(self.consumption_metrics["memory_usage_node"]) if self.consumption_metrics["memory_usage_node"] else 0
+        #consumptions = {}
+        average_cpu_usage_browser = self.get_average_usage('browser', 'cpu_usage')
+        average_cpu_usage_node = self.get_average_usage('node', 'cpu_usage')
+        average_memory_usage_browser = self.get_average_usage('browser', 'memory_usage')
+        average_memory_usage_node = self.get_average_usage('node', 'memory_usage')
+
         total_time = self.consumption_metrics["thread_execution_time"]
         
-        # Calculate network usage
-        bytes_sent = self.consumption_metrics["network_io_final"].bytes_sent - self.consumption_metrics["network_io_initial"].bytes_sent
-        bytes_received = self.consumption_metrics["network_io_final"].bytes_recv - self.consumption_metrics["network_io_initial"].bytes_recv
+        # Calculate network consumption
+        network_consumption = self.get_network_consumption()
+
 
         #calculate energy consumptions
         try:
@@ -177,7 +179,6 @@ class energyCalculator:
         browser_memory_consumption = average_memory_usage_browser * self.consumption_data['ram'][self.ram] * total_time
         node_memory_consumption = average_memory_usage_node * self.consumption_data['ram'][self.ram] * total_time
         
-        network_consumption = (bytes_sent + bytes_received)/1024/1024 * self.consumption_data['network']
         total_consumption = browser_cpu_consumption + node_cpu_consumption + browser_memory_consumption + node_memory_consumption + network_consumption
         
         consumptions = {
@@ -189,3 +190,12 @@ class energyCalculator:
             "network_consumption": network_consumption
         }
         return consumptions
+    
+    def get_average_usage(self, process_name, usage_type):
+        usage = self.consumption_metrics[f"{usage_type}_{process_name}"]
+        return sum(usage) / len(usage) if usage else 0
+    
+    def get_network_consumption(self):
+        bytes_sent = self.consumption_metrics["network_io_final"].bytes_sent - self.consumption_metrics["network_io_initial"].bytes_sent
+        bytes_received = self.consumption_metrics["network_io_final"].bytes_recv - self.consumption_metrics["network_io_initial"].bytes_recv
+        return (bytes_sent + bytes_received)/1024/1024 * self.consumption_data['network']

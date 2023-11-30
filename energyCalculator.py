@@ -111,11 +111,11 @@ class energyCalculator:
         self.print_consumption_results()  # Call print results at the end of the test
 
     def measure_consumption(self):
-        self.consumption_metrics["network_io_initial"] = psutil.net_io_counters() #pernic=True)['lo']
+        self.consumption_metrics["network_io_initial"] = psutil.net_io_counters(pernic=True)['lo']
         while self.running:
             self.record_consumption_metrics()
             time.sleep(0.01)
-        self.consumption_metrics["network_io_final"] = psutil.net_io_counters() #pernic=True)['lo']
+        self.consumption_metrics["network_io_final"] = psutil.net_io_counters(pernic=True)['lo']
 
     def record_consumption_metrics(self):
         self.record_total_consumption(self.browser_process, "browser")

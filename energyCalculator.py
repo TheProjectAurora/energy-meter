@@ -16,6 +16,7 @@ class color:
 
 class energyCalculator:    
     ROBOT_LISTENER_API_VERSION = 3
+    DEFAULT_PROCESSOR_CONSUMPTION = 100  # Watts
 
     def __init__(self, ram='ddr4'):
         self.processor = self.get_cpu_info()
@@ -155,15 +156,13 @@ class energyCalculator:
 
         #calculate energy consumptions
         try:
-            self.consumption_data['processor'][self.processor]
+            processor_consumption = self.consumption_data['processor'][self.processor]
         except KeyError:
-            print("")
-            print(f"Processor {self.processor} not found in consumption data. Using default value of 100 Ws.")
-            print(f"Add it to the consumption data to consumption.json to get more accurate results.")
-            self.consumption_data['processor'][self.processor] = 100
+            print(f"\nProcessor {self.processor} not found. Using default value of {self.DEFAULT_PROCESSOR_CONSUMPTION} Ws.")
+            processor_consumption = self.DEFAULT_PROCESSOR_CONSUMPTION
     
-        browser_cpu_consumption = average_cpu_usage_browser/100 * self.consumption_data['processor'][self.processor]* total_time
-        node_cpu_consumption = average_cpu_usage_node/100 * self.consumption_data['processor'][self.processor]* total_time
+        browser_cpu_consumption = average_cpu_usage_browser/100 * processor_consumption * total_time
+        node_cpu_consumption = average_cpu_usage_node/100 * processor_consumption * total_time
         browser_memory_consumption = average_memory_usage_browser * self.consumption_data['ram'][self.ram] * total_time
         node_memory_consumption = average_memory_usage_node * self.consumption_data['ram'][self.ram] * total_time
         

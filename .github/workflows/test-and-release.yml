@@ -39,7 +39,9 @@ jobs:
         node-version: '14'  # Set this to the Node.js version you use
   
     - name: Install Node.js dependencies
-      run: npm install
+      run: |
+        cd SUT 
+        npm install
   
     - name: Start Node.js server
       run: | 
@@ -47,7 +49,7 @@ jobs:
         nohup node index.js &
   
     - name: Run Robot Framework tests
-      run: robot --outputdir results --listener energyMeter.py merry_christmas.robot
+      run: robot --variable HEADLESS:True --outputdir results --listener energyMeter.py merry_christmas.robot
 
     - name: Upload Robot Framework test results
       uses: actions/upload-artifact@v2

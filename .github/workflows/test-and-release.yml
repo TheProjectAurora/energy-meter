@@ -23,8 +23,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install psutil  # Add any other dependencies your project requires
         pip install robotframework
-        # If you have a requirements.txt, you can replace the above line with:
-        # pip install -r requirements.txt
+
+    - name: Install Robot Framework Browser
+      run: |
+        pip install robotframework-browser
+        rfbrowser init
 
     - name: Run unit tests
       run: |

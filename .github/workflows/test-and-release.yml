@@ -30,10 +30,10 @@ jobs:
       run: |
         python -m unittest discover -s .  # Assuming your tests are in the 'tests' directory
     
-        - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'  # Set this to the Node.js version you use
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'  # Set this to the Node.js version you use
   
     - name: Install Node.js dependencies
       run: npm install

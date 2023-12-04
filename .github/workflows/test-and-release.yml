@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
 
     runs-on: ubuntu-latest
 
@@ -22,9 +22,33 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install psutil  # Add any other dependencies your project requires
+        pip install robotframework
         # If you have a requirements.txt, you can replace the above line with:
         # pip install -r requirements.txt
 
     - name: Run unit tests
       run: |
         python -m unittest discover -s .  # Assuming your tests are in the 'tests' directory
+    
+        - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Set this to the Node.js version you use
+  
+    - name: Install Node.js dependencies
+      run: npm install
+  
+    - name: Start Node.js server
+      run: | 
+        cd SUT
+        nohup node index.js &
+  
+    - name: Run Robot Framework tests
+      run: robot --outputdir results --listener energyMeter.py merry_christmas.robot
+
+    - name: Upload Robot Framework test results
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: robot-results
+        path: results

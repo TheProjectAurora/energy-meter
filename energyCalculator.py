@@ -14,6 +14,32 @@ class color:
    END = '\033[0m'
 
 
+class energyCalculator:
+    """
+    A class that calculates energy consumption during a test.
+
+   
+    """
+    
+    ROBOT_LISTENER_API_VERSION = 3
+    DEFAULT_PROCESSOR_CONSUMPTION = 100  # Watts
+
+    def __init__(self, ram='ddr4'):
+        """
+        Initializes the energyCalculator object.
+
+        Args:
+            ram (str, optional): The RAM type. Defaults to 'ddr4'.
+        """
+        self.processor = self.get_cpu_info()
+        self.browser_process = None
+        self.node_process = None
+        self.ram = ram
+        self.load_consumption_data()
+        self.running = False
+        self.reset_consumption_metrics()
+
+    # Rest of the code...
 class energyCalculator:    
     ROBOT_LISTENER_API_VERSION = 3
     DEFAULT_PROCESSOR_CONSUMPTION = 100  # Watts

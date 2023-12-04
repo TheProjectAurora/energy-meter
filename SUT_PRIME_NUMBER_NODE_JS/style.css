@@ -1,0 +1,28 @@
+body {
+    margin: 0;
+    text-align: center; /* Center content horizontally */
+}
+
+.content-container {
+    display: inline-block;
+    text-align: left; /* Aligns the content inside the container to the left */
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 10px auto; /* Center button and provide vertical spacing */
+    cursor: pointer;
+    display: block; /* Stack buttons vertically */
+}
+
+#primeContainer {
+    white-space: pre-wrap;
+    overflow-y: scroll;
+    height: 300px;
+    margin-top: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    display: none; /* Initially hidden */
+}

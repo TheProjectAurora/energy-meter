@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'  # Use the version of Python your project uses
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install psutil  # Add any other dependencies your project requires
+        # If you have a requirements.txt, you can replace the above line with:
+        # pip install -r requirements.txt
+
+    - name: Run unit tests
+      run: |
+        python -m unittest discover -s tests  # Assuming your tests are in the 'tests' directory

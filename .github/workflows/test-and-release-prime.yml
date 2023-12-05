@@ -6,7 +6,7 @@ on:
         paths:
             - 'energyMeter.py'
             - 'prime_number.robot'
-            - 'SUT_PRIME_NUMBER_NODE_JS/**'
+            - 'SUTs/Prime-numbers-JS/**'
             - '.github/workflows/prime-number.yml'
 
 jobs:

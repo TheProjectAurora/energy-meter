@@ -43,12 +43,12 @@ jobs:
   
     - name: Install Node.js dependencies
       run: |
-        cd SUT_PRIME_NUMBER_NODE_JS
+        cd SUTs/Prime-numbers
         npm install
   
     - name: Start Node.js server
       run: | 
-        cd SUT_PRIME_NUMBER_NODE_JS
+        cd SUTs/Prime-numbers
         nohup node index.js &
   
     - name: Run Robot Framework tests

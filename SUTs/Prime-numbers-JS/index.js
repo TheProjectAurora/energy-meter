@@ -72,25 +72,25 @@ app.get('/', (req, res) => {
             primeCount = 0;
             primeNumbers = [];
             lastPrime = 1;
-            document.getElementById('primeContainer').innerText = 'Prime numbers will appear here';
+            document.getElementById('primeContainer').innerText = '';
             fetch('/reset?lastPrime=' + lastPrime)
                 .catch(error => console.error('Error:', error));
           }
         </script>
       </head>
       <body>
-        <div class="content-container">
-          <div class="inputs-buttons-container">
-            <div class="input-container">
+      <div class="content-container">
+      <div class="inputs-buttons-container">
+          <div class="input-container">
               <label for="primeNumberInput">Prime numbers:</label>
               <input type="number" id="primeNumberInput" value="5000" min="1" />
-            </div>
-            <button id="calculateButton" onclick="sendCalculateRequest()">Calculate prime numbers</button>
-            <button id="nextPrimesButton" onclick="requestNextPrime()">Request the next prime number</button>
-            <button id="resetButton" onclick="reset()">C</button>
           </div>
-          <div id="primeContainer">Prime numbers will appear here</div>
-        </div>
+          <button id="calculateButton" onclick="sendCalculateRequest()">Request all prime numbers</button>
+          <button id="nextPrimesButton" onclick="requestNextPrime()">Request all prime numbers one by one</button>
+      </div>
+      <div id="primeContainer"></div>
+      <button id="resetButton" onclick="reset()">C</button>
+  </div>
       </body>
     </html>
   `);

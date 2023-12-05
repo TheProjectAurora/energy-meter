@@ -9,40 +9,57 @@ body, html {
 
 .content-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 25px;
+    background-color: #ffffff;
+    position: relative;
+}
+.inputs-buttons-container {
+    display: flex;
+    flex-direction: column; /* Revert to column layout */
+    align-items: center;
+    padding-bottom: 50px;
 }
 
-.inputs-buttons-container {
-    text-align: center;
+.inputs-buttons-container > button:last-child {
+    margin-bottom: 0;
 }
 
 .input-container {
-    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Space below the input container */
+    width: 250px; /* Set the width to match the buttons */
 }
 
 label {
-    display: block;
-    margin-bottom: 5px;
+    margin-right: 10px;
     font-size: 16px;
     font-family: Arial, sans-serif;
+    width: 110px; /* Fixed width for the label */
+    text-align: right; /* Align the text to the right */
+    white-space: nowrap; /* Prevent text wrapping */
 }
 
-input[type="text"] {
-    width: 250px; /* Match width with buttons */
+input[type="number"] {
+    flex-grow: 1; /* Allow input to take up the remaining space */
     padding: 5px;
     font-size: 16px;
     font-family: Arial, sans-serif;
     border: 1px solid #ccc;
     border-radius: 5px;
-    margin-bottom: 10px;
+    max-width: calc(250px - 120px); /* Calculate the remaining space */
 }
 
 button {
     width: 250px;
     padding: 10px 20px;
     font-size: 16px;
-    margin-bottom: 10px;
+    margin-bottom: 10px; /* Space below each button */
     cursor: pointer;
     background-color: #a9f5e4;
     border: none;
@@ -55,6 +72,16 @@ button:hover {
     background-color: #92e4d6;
 }
 
+#resetButton {
+    width: 50px;
+    height: 50px;
+    padding: 5px;
+    font-size: 14px;
+    margin-top: 20px;
+    align-self: flex-end;
+    text-align: center;
+}
+
 #primeContainer {
     white-space: pre-wrap;
     overflow-y: auto;
@@ -63,5 +90,8 @@ button:hover {
     border: 1px solid #ccc;
     padding: 10px;
     background-color: #f9f9f9;
-    margin-left: 20px; /* Space between buttons/input and result box */
+    margin-top: 0px;
+    border-radius: 5px; /* Rounded corners like the buttons */
+    font-size: 16px; /* Same font size as the buttons */
+    font-family: Arial, sans-serif; /* Same font family as the buttons */
 }

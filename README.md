@@ -14,7 +14,7 @@ The `energyMeter.py` is a custom listener for the Robot Framework, designed to m
 Before running tests with the Robot Framework, ensure that the Node.js service is up and running. You can initialize and start the service by running the following command in your project directory:
 
 ```bash
-cd SUT/TS_Prime
+cd SUTs/Prime-numbers-JS
 node init
 node index.js
 ```

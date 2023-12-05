@@ -69,7 +69,16 @@ class energyMeter(object):
                 with open('/proc/cpuinfo') as f:
                     for line in f:
                         if "model name" in line:
-                            return line.split(":")[1].strip()
+                            processor = line.split(":")[1].strip()
+                            if "@" in processor:
+                                # Find the position of "@" in the string
+                                at_position = processor.find("@")
+
+                                # Use slicing to extract the desired portion of the string
+                                processor_strip = processor[:at_position - 1].strip()  # Subtract 1 to include the space before "@"
+                                return(processor_strip)
+                            else:
+                                return(processor)
                 return "Unknown"
 
             # Check for macOS
@@ -171,12 +180,13 @@ class energyMeter(object):
         return consumptions
     
     def consumption(self, process_name, usage_type):
+        
         if usage_type == 'cpu_usage':
                     #calculate energy consumptions
             try:
                 processor_consumption = self.consumption_data['processor'][self.processor]
             except KeyError:
-                print(f"\nProcessor {self.processor} not found. Using default value of {self.DEFAULT_PROCESSOR_CONSUMPTION} Ws.")
+                print(f"\nProcessor '{self.processor}' not found. Using default value of {self.DEFAULT_PROCESSOR_CONSUMPTION} Ws.")
                 processor_consumption = self.DEFAULT_PROCESSOR_CONSUMPTION
             return self.get_average_usage(process_name, usage_type)/100 * processor_consumption * self.consumption_metrics["thread_execution_time"]
             

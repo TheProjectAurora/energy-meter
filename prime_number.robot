@@ -9,7 +9,7 @@ ${AMOUNT OF PRIMENUMBERS}    100
 ${LAST PRIMENUMBER}    541
 
 * Test Cases *
-Get 100 first primenumbers with fetch
+Get 100 first primenumbers with single fetch
     Get primenumbers with one fetch     ${AMOUNT OF PRIMENUMBERS}      ${LAST PRIMENUMBER}
 
 Get 100 first primenumbers with multiple fetches

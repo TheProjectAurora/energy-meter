@@ -1,0 +1,62 @@
+name: prime-number
+
+on:
+    push:
+        branches: [ main ]
+        paths:
+            - 'energyMeter.py'
+            - 'prime_number.robot'
+            - 'SUT_PRIME_NUMBER_NODE_JS/**'
+            - '.github/workflows/prime-number.yml'
+
+jobs:
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'  # Use the version of Python your project uses
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install psutil  # Add any other dependencies your project requires
+        pip install robotframework
+
+    - name: Install Robot Framework Browser
+      run: |
+        pip install robotframework-browser
+        rfbrowser init
+
+    - name: Run unit tests
+      run: |
+        python -m unittest discover -s .  # Assuming your tests are in the 'tests' directory
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'  # Set this to the Node.js version you use
+  
+    - name: Install Node.js dependencies
+      run: |
+        cd SUT_PRIME_NUMBER_NODE_JS
+        npm install
+  
+    - name: Start Node.js server
+      run: | 
+        cd SUT_PRIME_NUMBER_NODE_JS
+        nohup node index.js &
+  
+    - name: Run Robot Framework tests
+      run: robot --variable HEADLESS:True --outputdir results --listener energyMeter.py prime_number.robot
+
+    - name: Upload Robot Framework test results
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: robot-results
+        path: results

@@ -1,28 +1,67 @@
-body {
+body, html {
+    height: 100%;
     margin: 0;
-    text-align: center; /* Center content horizontally */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
 }
 
 .content-container {
-    display: inline-block;
-    text-align: left; /* Aligns the content inside the container to the left */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.inputs-buttons-container {
+    text-align: center;
+}
+
+.input-container {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+input[type="text"] {
+    width: 250px; /* Match width with buttons */
+    padding: 5px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 button {
+    width: 250px;
     padding: 10px 20px;
     font-size: 16px;
-    margin: 10px auto; /* Center button and provide vertical spacing */
+    margin-bottom: 10px;
     cursor: pointer;
-    display: block; /* Stack buttons vertically */
+    background-color: #a9f5e4;
+    border: none;
+    border-radius: 5px;
+    color: #000;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #92e4d6;
 }
 
 #primeContainer {
     white-space: pre-wrap;
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 300px;
-    margin-top: 20px;
+    width: 300px;
     border: 1px solid #ccc;
     padding: 10px;
     background-color: #f9f9f9;
-    display: none; /* Initially hidden */
+    margin-left: 20px; /* Space between buttons/input and result box */
 }

@@ -3,6 +3,5 @@ log.html
 output.xml
 report.html
 playwright-log.txt
-SUT/node_modules/
-SUT/package-lock.json
+**/node_modules/
 *.Identifier

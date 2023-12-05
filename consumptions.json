@@ -3,7 +3,9 @@
     "m1" : 39.0,
     "12th Gen Intel(R) Core(TM) i9-12900K" : 150,
     "i7-8650U": 15,
-    "Intel(R) Xeon(R) CPU E5-2673 v4": 135
+    "Intel(R) Xeon(R) CPU E5-2673 v4": 135,
+    "Intel(R) Xeon(R) Platinum 8171M CPU": 165
+
   },
   "ram": {
     "ddr4" : 0.0000375

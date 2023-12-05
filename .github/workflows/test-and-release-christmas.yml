@@ -3,9 +3,11 @@ name: moving-background
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
+    paths:
+        - 'energyMeter.py'
+        - 'merry_christmas.robot'
+        - 'SUTs/Moving-background-JS/**'
+        - '.github/workflows/test-and-release-christmas.yml'
 jobs:
   build-and-test:
 
@@ -36,16 +38,16 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '14'  # Set this to the Node.js version you use
+        node-version: '20'  # Set this to the Node.js version you use
   
     - name: Install Node.js dependencies
       run: |
-        cd SUTs/Prime-numbers-JS
+        cd SUTs/Moving-background-JS/
         npm install
   
     - name: Start Node.js server
       run: | 
-        cd SUTs/Prime-numbers-JS
+        cd SUTs/Moving-background-JS/
         nohup node index.js &
   
     - name: Run Robot Framework tests

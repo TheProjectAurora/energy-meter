@@ -8,6 +8,7 @@ on:
             - 'prime_number.robot'
             - 'SUTs/Prime-numbers-JS/**'
             - '.github/workflows/prime-number.yml'
+            - 'test_energyMeter.py'
 
 jobs:
   build-and-test:

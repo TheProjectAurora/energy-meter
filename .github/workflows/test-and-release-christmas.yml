@@ -8,6 +8,8 @@ on:
         - 'merry_christmas.robot'
         - 'SUTs/Moving-background-JS/**'
         - '.github/workflows/test-and-release-christmas.yml'
+        - 'test_energyMeter.py'
+
 jobs:
   build-and-test:
 

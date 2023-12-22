@@ -5,3 +5,13 @@ report.html
 playwright-log.txt
 **/node_modules/
 *.Identifier
+*.class
+**/target/
+*.log
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+.DS_Store # for macOS
+Thumbs.db  # for Windows

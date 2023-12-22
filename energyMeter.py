@@ -127,11 +127,18 @@ class energyMeter(object):
         self.print_consumption_results()  # Call print results at the end of the test
 
     def measure_consumption(self):
-        self.consumption_metrics["network_io_initial"] = psutil.net_io_counters(pernic=True)['lo']
+        self.consumption_metrics["network_io_initial"] = self.get_localhostmetrics()
         while self.running:
             self.record_consumption_metrics()
             time.sleep(0.01)
-        self.consumption_metrics["network_io_final"] = psutil.net_io_counters(pernic=True)['lo']
+        self.consumption_metrics["network_io_final"] = self.get_localhostmetrics()
+
+    def get_localhostmetrics(self):
+        interfaces = psutil.net_io_counters(pernic=True)
+        for interface_name in interfaces:
+            if interface_name.startswith('lo'):
+                return(interfaces[interface_name])
+        
 
     def record_consumption_metrics(self):
         if self.browser_process: self.record_total_consumption(self.browser_process, "browser")

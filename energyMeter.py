@@ -26,6 +26,7 @@ class energyMeter(object):
         self.processor = self.get_cpu_info()
         self.browser_process = None
         self.node_process = None
+        self.tomcat_process = None
         self.ram = ram
         self.load_consumption_data()
         self.running = False
@@ -103,6 +104,8 @@ class energyMeter(object):
             self.browser_process = self.find_process('chrome')
         if not self.node_process:
             self.node_process = self.find_process('node', 'index.js')
+        if not self.tomcat_process:
+            self.tomcat_process = self.find_process('tomcat')
 
     def reset_consumption_metrics(self):
         # Reset or initialize metrics
@@ -131,8 +134,9 @@ class energyMeter(object):
         self.consumption_metrics["network_io_final"] = psutil.net_io_counters(pernic=True)['lo']
 
     def record_consumption_metrics(self):
-        self.record_total_consumption(self.browser_process, "browser")
-        self.record_total_consumption(self.node_process, "node")
+        if self.browser_process: self.record_total_consumption(self.browser_process, "browser")
+        if self.node_process: self.record_total_consumption(self.node_process, "node")
+        if self.tomcat_process: self.record_total_consumption(self.tomcat_process, "tomcat")
 
     def record_total_consumption(self, process, process_name):
         self.record_memory_consumption(process, process_name)
@@ -161,8 +165,10 @@ class energyMeter(object):
         print(f"💭 Browser Memory Consumption: {consumptions['browser_memory_consumption']:.2f} Ws")
         print("")
         print("Backend")
-        print(f"💻 Node CPU Consumption: {consumptions['node_cpu_consumption']:.2f} Ws")
-        print(f"💭 Node Memory Consumption: {consumptions['node_memory_consumption']:.2f} Ws")
+        if self.node_process: print(f"💻 Node CPU Consumption: {consumptions['backend_cpu_consumption']:.2f} Ws")
+        if self.node_process: print(f"💭 Node Memory Consumption: {consumptions['backend_memory_consumption']:.2f} Ws")
+        if self.tomcat_process: print(f"💻 TomCat CPU Consumption: {consumptions['backend_cpu_consumption']:.2f} Ws")
+        if self.tomcat_process: print(f"💭 TomCat Memory Consumption: {consumptions['backend_memory_consumption']:.2f} Ws")
         print("")
         print(f"🌍 Network Consumption: {consumptions['network_consumption']:.2f} Ws")
 
@@ -170,12 +176,18 @@ class energyMeter(object):
         # Calculate average CPU and Memory consumption
         consumptions = {}
         
-        consumptions["browser_cpu_consumption"] =  self.consumption('browser', 'cpu_usage')
-        consumptions["node_cpu_consumption"] = self.consumption('node', 'cpu_usage')
+        if self.node_process: 
+            consumptions["backend_cpu_consumption"] = self.consumption('node', 'cpu_usage')
+            consumptions["backend_memory_consumption"] = self.consumption('node', 'memory_usage')
+
+        elif self.tomcat_process: 
+            consumptions["backend_cpu_consumption"] = self.consumption('tomcat', 'cpu_usage')
+            consumptions["backend_memory_consumption"] = self.consumption('tomcat', 'memory_usage')
+
+        consumptions["browser_cpu_consumption"] = self.consumption('browser', 'cpu_usage')
         consumptions["browser_memory_consumption"] = self.consumption('browser', 'memory_usage')
-        consumptions["node_memory_consumption"] = self.consumption('node', 'memory_usage')
         consumptions['network_consumption'] = self.get_network_consumption()
-        consumptions['total_consumption'] =  consumptions["browser_cpu_consumption"] + consumptions["node_cpu_consumption"] + consumptions["browser_memory_consumption"] + consumptions["node_memory_consumption"] + consumptions['network_consumption']
+        consumptions['total_consumption'] =  consumptions["browser_cpu_consumption"] + consumptions["backend_cpu_consumption"] + consumptions["browser_memory_consumption"] + consumptions["backend_memory_consumption"] + consumptions['network_consumption']
         
         return consumptions
     

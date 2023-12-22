@@ -1,7 +1,7 @@
-# Energy Calculator for Robot Framework
+# Energy Meter for Robot Framework
 
 ## Overview
-The `energyMeter.py` is a custom listener for the Robot Framework, designed to monitor and calculate the energy consumption of specific processes during test execution. It focuses on tracking CPU and memory usage, as well as network I/O, for browser and Node.js processes.
+The `energyMeter.py` is a custom listener for the Robot Framework, for Energy Consumption Testing (EC Testing). It is designed to monitor and calculate the energy consumption of specific processes during test execution. It focuses on tracking CPU and memory usage, as well as network I/O, for browser and Node.js processes.
 
 ## Prerequisites
 - Python 3.x

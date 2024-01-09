@@ -59,7 +59,7 @@ jobs:
         sh $CATALINA_HOME/bin/startup.sh
 
     - name: Run Robot Framework tests
-      run: robot --variable HEADLESS:True --outputdir results --listener - SERVER:tomcat energyMeter.py prime_number.robot
+      run: robot --variable HEADLESS:True --outputdir results --listener -v SERVER:tomcat energyMeter.py prime_number.robot
 
     - name: Upload Robot Framework test results
       uses: actions/upload-artifact@v2

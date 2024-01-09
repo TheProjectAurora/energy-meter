@@ -65,7 +65,8 @@ jobs:
 
     - name: Print Tomcat logs
       run: |
-      cat $CATALINA_HOME/logs/catalina.out
+        cat $CATALINA_HOME/logs/catalina.out
+
 
     - name: Run Robot Framework tests
       run: robot --variable HEADLESS:True --outputdir results --listener energyMeter.py --variable SERVER:tomcat prime_number.robot

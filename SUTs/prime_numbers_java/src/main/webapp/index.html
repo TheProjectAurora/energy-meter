@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prime number calculator 3</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="content-container">
+        <div class="inputs-buttons-container">
+            <div class="input-container">
+                <label for="primeNumberInput">Prime numbers:</label>
+                <input type="number" id="primeNumberInput" value="5000" min="1" />
+            </div>
+            <button id="calculateButton">Request all prime numbers</button>
+            <button id="nextPrimesButton">Start requesting primes one by one</button>
+        </div>
+        <div id="primeContainer"></div>
+        <div id="errorContainer" style="color:red;"></div>
+        <button id="resetButton">C</button>
+    </div>
+    <script>
+        let keepRequesting = true;
+        let primeCount = 0;
+        let maxPrimes = 0;
+
+        document.getElementById('calculateButton').addEventListener('click', function() {
+            var primeLimit = document.getElementById('primeNumberInput').value;
+            let baseUrl = window.location.origin + window.location.pathname;
+            fetch(baseUrl + 'PrimeNumberServlet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'limit=' + primeLimit
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('primeContainer').innerText = data.primes.join(', ');
+            })
+            .catch((error) => {
+                document.getElementById('errorContainer').innerText = 'Error: ' + error.message;
+                console.error('Error:', error);
+            });
+        });
+
+        document.getElementById('nextPrimesButton').addEventListener('click', function() {
+            keepRequesting = true;
+            primeCount = 0;
+            maxPrimes = document.getElementById('primeNumberInput').value;
+            requestNextPrime();
+        });
+
+        function requestNextPrime() {
+            if (!keepRequesting || primeCount >= maxPrimes) return;
+
+            let baseUrl = window.location.origin + window.location.pathname;
+            fetch(baseUrl + 'PrimeNumberServlet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'nextPrime=true'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                let currentText = document.getElementById('primeContainer').innerText;
+                document.getElementById('primeContainer').innerText = currentText + (currentText ? ', ' : '') + data.nextPrime;
+                primeCount++;
+                requestNextPrime(); // Recursively request the next prime
+            })
+            .catch((error) => {
+                document.getElementById('errorContainer').innerText = 'Error: ' + error.message;
+                console.error('Error:', error);
+            });
+        }
+
+        document.getElementById('resetButton').addEventListener('click', function() {
+            keepRequesting = false; // Stop the loop
+            document.getElementById('primeContainer').innerText = '';
+            document.getElementById('errorContainer').innerText = '';
+
+            let baseUrl = window.location.origin + window.location.pathname;
+            fetch(baseUrl + 'PrimeNumberServlet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'reset=true'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Session reset:', data.reset);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

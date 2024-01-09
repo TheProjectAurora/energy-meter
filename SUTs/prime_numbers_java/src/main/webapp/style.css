@@ -1,0 +1,97 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+}
+
+.content-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 25px;
+    background-color: #ffffff;
+    position: relative;
+}
+.inputs-buttons-container {
+    display: flex;
+    flex-direction: column; /* Revert to column layout */
+    align-items: center;
+    padding-bottom: 50px;
+}
+
+.inputs-buttons-container > button:last-child {
+    margin-bottom: 0;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Space below the input container */
+    width: 250px; /* Set the width to match the buttons */
+}
+
+label {
+    margin-right: 10px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    width: 110px; /* Fixed width for the label */
+    text-align: right; /* Align the text to the right */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+input[type="number"] {
+    flex-grow: 1; /* Allow input to take up the remaining space */
+    padding: 5px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: calc(250px - 120px); /* Calculate the remaining space */
+}
+
+button {
+    width: 250px;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-bottom: 10px; /* Space below each button */
+    cursor: pointer;
+    background-color: #a9f5e4;
+    border: none;
+    border-radius: 5px;
+    color: #000;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #92e4d6;
+}
+
+#resetButton {
+    width: 50px;
+    height: 50px;
+    padding: 5px;
+    font-size: 14px;
+    margin-top: 20px;
+    align-self: flex-end;
+    text-align: center;
+}
+
+#primeContainer {
+    white-space: pre-wrap;
+    overflow-y: auto;
+    height: 300px;
+    width: 300px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #f9f9f9;
+    margin-top: 0px;
+    border-radius: 5px; /* Rounded corners like the buttons */
+    font-size: 16px; /* Same font size as the buttons */
+    font-family: Arial, sans-serif; /* Same font family as the buttons */
+}

@@ -63,8 +63,9 @@ jobs:
         cp SUTs/prime_numbers_java/target/prime_numbers_java.war $CATALINA_HOME/webapps/
         sh $CATALINA_HOME/bin/startup.sh
 
-    - name: Wait for Tomcat to start
-      run: sleep 10
+    - name: Print Tomcat logs
+      run: |
+      cat $CATALINA_HOME/logs/catalina.out
 
     - name: Run Robot Framework tests
       run: robot --variable HEADLESS:True --outputdir results --listener energyMeter.py --variable SERVER:tomcat prime_number.robot

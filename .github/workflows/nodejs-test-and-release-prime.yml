@@ -7,7 +7,7 @@ on:
             - 'energyMeter.py'
             - 'prime_number.robot'
             - 'SUTs/Prime-numbers-JS/**'
-            - '.github/workflows/prime-number.yml'
+            - '.github/workflows/nodejs-prime-number.yml'
             - 'test_energyMeter.py'
 
 jobs:

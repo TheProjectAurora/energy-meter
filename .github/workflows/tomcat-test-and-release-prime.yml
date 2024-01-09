@@ -18,6 +18,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    # Debugging step for Git
+    - name: Debug git information
+      run: |
+        git status --verbose
+        git log -n 5 --oneline
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:

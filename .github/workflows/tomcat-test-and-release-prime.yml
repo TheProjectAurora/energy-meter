@@ -61,7 +61,7 @@ jobs:
 
     - name: Deploy to Tomcat
       run: |
-        cp SUTs/Prime-numbers-Java/target/yourapp.war $CATALINA_HOME/webapps/
+        cp SUTs/Prime-numbers-Java/target/prime_numbers_java.war $CATALINA_HOME/webapps/
         sh $CATALINA_HOME/bin/startup.sh
 
     - name: Run Robot Framework tests

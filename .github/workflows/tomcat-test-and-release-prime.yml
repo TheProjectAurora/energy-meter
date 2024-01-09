@@ -55,9 +55,9 @@ jobs:
 
     - name: Download and Set up Tomcat
       run: |
-        wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz
-        tar xzvf apache-tomcat-9.0.56.tar.gz
-        export CATALINA_HOME=$PWD/apache-tomcat-9.0.56
+        wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.84/bin/apache-tomcat-9.0.84.tar.gz
+        tar xzvf apache-tomcat-9.0.84.tar.gz
+        export CATALINA_HOME=$PWD/apache-tomcat-9.0.84
 
     - name: Deploy to Tomcat
       run: |

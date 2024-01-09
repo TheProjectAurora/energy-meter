@@ -7,7 +7,7 @@ on:
       - 'energyMeter.py'
       - 'prime_number.robot'
       - 'SUTs/prime_numbers_java/**'
-      - '.github/workflows/tomcat-prime-number.yml'
+      - '.github/workflows/tomcat-test-and-release.yml'
       - 'test_energyMeter.py'
 
 jobs:

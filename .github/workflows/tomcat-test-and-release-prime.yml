@@ -1,0 +1,69 @@
+name: tomcat-prime-number
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'energyMeter.py'
+      - 'prime_number.robot'
+      - 'SUTs/prime_numbers_java/**'
+      - '.github/workflows/prime-number.yml'
+      - 'test_energyMeter.py'
+
+jobs:
+  build-and-test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install psutil robotframework robotframework-browser
+
+    - name: Install Robot Framework Browser
+      run: |
+        rfbrowser init
+
+    - name: Run Python unit tests
+      run: |
+        python -m unittest discover -s .
+
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'  # Or another distribution you prefer
+        java-version: '11'     # Use the version of Java your project uses
+
+    - name: Build with Maven  # Assuming you use Maven; adjust for your build tool
+      run: |
+        cd SUTs/prime_numbers_java
+        mvn package
+
+    - name: Download and Set up Tomcat
+      run: |
+        wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz
+        tar xzvf apache-tomcat-9.0.56.tar.gz
+        export CATALINA_HOME=$PWD/apache-tomcat-9.0.56
+
+    - name: Deploy to Tomcat
+      run: |
+        cp SUTs/Prime-numbers-Java/target/yourapp.war $CATALINA_HOME/webapps/
+        sh $CATALINA_HOME/bin/startup.sh
+
+    - name: Run Robot Framework tests
+      run: robot --variable HEADLESS:True --outputdir results --listener - SERVER:tomcat energyMeter.py prime_number.robot
+
+    - name: Upload Robot Framework test results
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: robot-results
+        path: results

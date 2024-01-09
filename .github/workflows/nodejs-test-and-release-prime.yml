@@ -1,4 +1,4 @@
-name: prime-number
+name: nodejs-prime-number
 
 on:
     push:
@@ -36,22 +36,22 @@ jobs:
     - name: Run unit tests
       run: |
         python -m unittest discover -s .  # Assuming your tests are in the 'tests' directory
-    
+
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
         node-version: '20'  # Set this to the Node.js version you use
-  
+
     - name: Install Node.js dependencies
       run: |
         cd SUTs/Prime-numbers-JS
         npm install
-  
+
     - name: Start Node.js server
-      run: | 
+      run: |
         cd SUTs/Prime-numbers-JS
         nohup node index.js &
-  
+
     - name: Run Robot Framework tests
       run: robot --variable HEADLESS:True --outputdir results --listener energyMeter.py prime_number.robot
 

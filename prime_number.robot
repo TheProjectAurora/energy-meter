@@ -13,10 +13,10 @@ ${LAST PRIMENUMBER}          541
 
 * Test Cases *
 Get x number of first primenumbers with single fetch
-    Get primenumbers with one fetch     ${AMOUNT OF PRIMENUMBERS}      ${LAST PRIMENUMBER}
+    Get primenumbers    calculateButton     ${AMOUNT OF PRIMENUMBERS}      ${LAST PRIMENUMBER}
 
 Get x number of first primenumbers with multiple fetches
-    Get primenumbers with multiple fetches    ${AMOUNT OF PRIMENUMBERS}    ${LAST PRIMENUMBER}
+    Get primenumbers  nextPrimesButton   ${AMOUNT OF PRIMENUMBERS}    ${LAST PRIMENUMBER}
 
 * Keywords *
 Open Browser
@@ -27,15 +27,9 @@ Open Browser
 Set URL
     Run Keyword If    '${SERVER}' == 'tomcat'    Set Suite Variable    ${URL}    http://localhost:8080/prime_numbers_java/
 
-Get primenumbers with one fetch
-    [Arguments]     ${amount}       ${last}
+Get primenumbers
+    [Arguments]    ${calculatebutton}    ${amount}       ${last}
     Fill Text       id=primeNumberInput         ${amount}
-    Click           id=calculateButton
-    Wait For Condition    Text        id=primeContainer    contains     ${last}    timeout=30 s
-
-Get primenumbers with multiple fetches
-    [Arguments]     ${amount}       ${last}
-    Fill Text       id=primeNumberInput         ${amount}
-    Click           id=nextPrimesButton
+    Click           id=${calculatebutton}
     Wait For Condition    Text        id=primeContainer    contains     ${last}    timeout=30 s
 

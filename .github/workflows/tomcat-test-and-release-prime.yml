@@ -55,8 +55,8 @@ jobs:
 
     - name: Download and Set up Tomcat
       run: |
-        wget https://downloads.apache.org/tomcat/tomcat-9/v9.0.84/bin/apache-tomcat-9.0.84.tar.gz
-        tar xzvf apache-tomcat-9.0.84.tar.gz
+        wget https://downloads.apache.org/tomcat/tomcat-10/v10.1.18/bin/apache-tomcat-10.1.18.tar.gz
+        tar xzvf apache-tomcat-10.1.18.tar.gz
 
     - name: Deploy to Tomcat
       run: |

@@ -2,6 +2,7 @@
 Library  Browser
 Suite Setup  Open Browser
 Suite Teardown  Close Browser
+Test Teardown   Click  id=resetButton
 
 * Variables *
 ${SERVER}                    nodejs
@@ -30,11 +31,11 @@ Get primenumbers with one fetch
     [Arguments]     ${amount}       ${last}
     Fill Text       id=primeNumberInput         ${amount}
     Click           id=calculateButton
-    Get Text        id=primeContainer    contains     ${last}
+    Wait For Condition    Text        id=primeContainer    contains     ${last}    timeout=30 s
 
 Get primenumbers with multiple fetches
     [Arguments]     ${amount}       ${last}
     Fill Text       id=primeNumberInput         ${amount}
     Click           id=nextPrimesButton
-    Get Text        id=primeContainer    contains     ${last}
+    Wait For Condition    Text        id=primeContainer    contains     ${last}    timeout=30 s
 

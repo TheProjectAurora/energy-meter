@@ -69,7 +69,7 @@ During the test execution, the energyMeter listener will monitor the energy cons
 
 ## Output
 At the end of the test execution, the script prints out a detailed report of the energy consumption, including CPU, memory, and network usage for both the frontend (browser) and backend (Node.js) processes.
-![image](https://github.com/NorthCodeLtd/energy_calculator/assets/1047173/dec7d4ea-5b5e-4613-85cc-9139413ad707)
+![1702541968572](https://github.com/TheProjectAurora/energy-meter/assets/1047173/6368e898-e928-40bb-9466-55789b3a232a)
 
 ## Contributing
 Contributions to enhance energyCalculator.py are welcome. Please submit your pull requests or issues to the repository.

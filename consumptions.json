@@ -1,6 +1,8 @@
 {
   "processor": {
     "Apple M1" : 39.0,
+    "Apple M1 Pro" : 39.0,
+    "AMD Ryzen 7 7700 8-Core Processor": 999.0,
     "12th Gen Intel(R) Core(TM) i9-12900K" : 150,
     "Intel(R) Core(TM) i7-8650U CPU": 15,
     "Intel(R) Xeon(R) CPU E5-2673 v4": 135,

@@ -1,8 +1,9 @@
 import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch, mock_open, MagicMock, Mock
 from energyMeter import energyMeter
 import json
-from unittest.mock import MagicMock
+import psutil
+
 
 class TestEnergyMeter(unittest.TestCase):
     def setUp(self):
@@ -24,17 +25,21 @@ class TestEnergyMeter(unittest.TestCase):
         with patch('psutil.process_iter') as mock_process_iter:
             mock_process = MagicMock()
             mock_process.info = {'name': 'test_process', 'cmdline': ['python', 'test.py']}
+            mock_process.parent = Mock(side_effect = psutil.NoSuchProcess(0))
             mock_process_iter.return_value = [mock_process]
             result = self.energy_meter.find_process('test_process', 'python')
-            self.assertEqual(result.info, mock_process.info)
+            for process in result:
+                self.assertEqual(process.info, mock_process.info)
 
     def test_find_process_name(self):
         with patch('psutil.process_iter') as mock_process_iter:
             mock_process = MagicMock()
+            mock_process.parent = Mock(side_effect = psutil.NoSuchProcess(0))
             mock_process.info = {'name': 'test_process'}
             mock_process_iter.return_value = [mock_process]
             result = self.energy_meter.find_process('test_process')
-            self.assertEqual(result.info, mock_process.info)
+            for process in result:
+                self.assertEqual(process.info, mock_process.info)
 
 
     def test_find_process_not_found(self):

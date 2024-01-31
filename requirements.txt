@@ -1,0 +1,4 @@
+robotframework
+robotframework-browser
+psutil;  sys_platform != 'win32'
+wmi; sys_platform == 'win32'

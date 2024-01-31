@@ -9,6 +9,7 @@ on:
             - 'SUTs/Prime-numbers-JS/**'
             - '.github/workflows/nodejs-test-and-release-prime.yml'
             - 'test_energyMeter.py'
+            - 'requirements.txt'
 
 jobs:
   build-and-test:
@@ -22,15 +23,10 @@ jobs:
       with:
         python-version: '3.8'  # Use the version of Python your project uses
 
-    - name: Install dependencies
+    - name: Install & Setup dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install psutil  # Add any other dependencies your project requires
-        pip install robotframework
-
-    - name: Install Robot Framework Browser
-      run: |
-        pip install robotframework-browser
+        python -m pip install --upgrade setuptools pip wheel
+        python -m pip install -r requirements.txt
         rfbrowser init
 
     - name: Run unit tests

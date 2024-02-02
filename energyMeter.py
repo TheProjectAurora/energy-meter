@@ -6,11 +6,6 @@ import platform
 import os
 from pathlib import Path
 
-ON_WINDOWS = False
-if platform.system() == "Windows":
-    ON_WINDOWS = True
-    import wmi
-
 try:
     from Browser import __file__ as _BrowserBasePath
 except ModuleNotFoundError:
@@ -96,21 +91,21 @@ class energyMeter(object):
                     if in_expected_path:
                         if command:
                             if command in proc.info.get("cmdline", []):
-                                if ON_WINDOWS:
+                                if self.platform_id == "Windows":
                                     windows_chrome_hack.append(proc)
                                 else:
                                     parent_process = ensure_parent(proc, process_name)
                                     return [parent_process, *parent_process.children()]
                         else:
                             print(f"{process_name} process found!")
-                            if ON_WINDOWS:
+                            if self.platform_id == "Windows":
                                 windows_chrome_hack.append(proc)
                             else:
                                 parent_process = ensure_parent(proc, process_name)
                                 return [parent_process, *parent_process.children()]
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass  # Process has terminated or cannot be accessed
-        if ON_WINDOWS:
+        if self.platform_id == "Windows":
             if len(windows_chrome_hack)==0:
                 print(f"{process_name} process not found!")
                 return None

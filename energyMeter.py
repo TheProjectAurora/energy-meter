@@ -47,7 +47,7 @@ class energyMeter(object):
 
     def load_consumption_data(self):
         try:
-            with open("consumptions.json") as f:
+            with open("consumptions.json", encoding="utf-8") as f:
                 self.consumption_data = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Error loading consumption data: {e}")

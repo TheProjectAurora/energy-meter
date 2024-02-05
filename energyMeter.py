@@ -6,6 +6,9 @@ import platform
 import os
 from pathlib import Path
 
+if platform.system() == "Windows":
+    import wmi
+
 try:
     from Browser import __file__ as _BrowserBasePath
 except ModuleNotFoundError:
@@ -27,26 +30,36 @@ class energyMeter(object):
     """
 
     ROBOT_LISTENER_API_VERSION = 3
-    DEFAULT_PROCESSOR_CONSUMPTION = 100  # Watts
 
     def __init__(self, ram="ddr4"):
+        self.config = None
         self.platform_id = platform.system()
         self.processor = self.get_cpu_info()
         self.browser_processes = None
         self.node_process = None
         self.tomcat_process = None
         self.ram = ram
-        self.load_consumption_data()
+        self.load_configs()
+
         self.running = False
         self.reset_consumption_metrics()
 
-    def load_consumption_data(self):
+    def load_configs(self):
+        config_file = Path(__file__).resolve().parent / "energyMeterConfig.json"
         try:
-            with open("consumptions.json", encoding="utf-8") as f:
-                self.consumption_data = json.load(f)
+            self.config = json.loads(config_file.read_text(encoding="utf-8"))
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f"Error loading consumption data: {e}")
-            self.consumption_data = {}
+            print(f"Error loading configs from {config_file}: {e}")
+            self.config = {
+                "processor": {
+                    "DEFAULT": 100.0,
+                },
+                "ram": {"ddr4": 0.0000375},
+                "network": 1.8,
+            }
+
+        if self.processor not in self.config["processor"]:
+            self.config["processor"][self.processor] = self.config["processor"]["DEFAULT"]
 
     def find_process(self, process_name, command=None, expected_path=None):
         """
@@ -73,7 +86,11 @@ class energyMeter(object):
 
         windows_chrome_hack = []
         if process_name == "chrome":
-            process_name = {"Linux": "chrome", "Windows": "chrome.exe", "Darwin": "Chromium"}[self.platform_id]
+            process_name = {
+                "Linux": "chrome",
+                "Windows": "chrome.exe",
+                "Darwin": "Chromium",
+            }[self.platform_id]
 
         for proc in psutil.process_iter(["pid", "name", "cmdline"]):
             try:
@@ -106,7 +123,7 @@ class energyMeter(object):
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass  # Process has terminated or cannot be accessed
         if self.platform_id == "Windows":
-            if len(windows_chrome_hack)==0:
+            if len(windows_chrome_hack) == 0:
                 print(f"{process_name} process not found!")
                 return None
 
@@ -298,10 +315,10 @@ class energyMeter(object):
         if usage_type == "cpu_usage":
             # calculate energy consumptions
             try:
-                processor_consumption = self.consumption_data["processor"][self.processor]
+                processor_consumption = self.config["processor"][self.processor]
             except KeyError:
                 print(
-                    f"\nProcessor '{self.processor}' not found. Using default value of {self.DEFAULT_PROCESSOR_CONSUMPTION} Ws."
+                    f"\nProcessor '{self.processor}' not found. Using default value of {self.config['processor']['DEFAULT']} Ws."
                 )
                 processor_consumption = self.DEFAULT_PROCESSOR_CONSUMPTION
             return (
@@ -314,7 +331,7 @@ class energyMeter(object):
         elif usage_type == "memory_usage":
             return (
                 self.get_average_usage(process_name, usage_type)
-                * self.consumption_data["ram"][self.ram]
+                * self.config["ram"][self.ram]
                 * self.consumption_metrics["thread_execution_time"]
             )
 
@@ -330,4 +347,4 @@ class energyMeter(object):
         bytes_received = (
             self.consumption_metrics["network_io_final"].bytes_recv - self.consumption_metrics["network_io_initial"].bytes_recv
         )
-        return (bytes_sent + bytes_received) / 1024 / 1024 * self.consumption_data["network"]
+        return (bytes_sent + bytes_received) / 1024 / 1024 * self.config["network"]

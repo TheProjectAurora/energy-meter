@@ -10,6 +10,11 @@ if platform.system() == "Windows":
     import wmi
 
 try:
+    from mdgen import MDGen
+except ModuleNotFoundError:
+    MDGen = None
+
+try:
     from Browser import __file__ as _BrowserBasePath
 except ModuleNotFoundError:
     _BrowserBasePath = None
@@ -43,6 +48,15 @@ class energyMeter(object):
 
         self.running = False
         self.reset_consumption_metrics()
+        self.summary = None
+        self._output = os.environ.get("GITHUB_STEP_SUMMARY", None)
+        if self._output and MDGen:
+            self.summary = MDGen()
+            self._output = Path(self._output)
+            try:
+                self._output.unlink()
+            except:
+                pass
 
     def load_configs(self):
         config_file = Path(__file__).resolve().parent / "energyMeterConfig.json"
@@ -214,7 +228,7 @@ class energyMeter(object):
         self.running = False
         self.thread.join()
         self.calculate_consumption()
-        self.print_consumption_results()  # Call print results at the end of the test
+        self.print_consumption_results(name.name)  # Call print results at the end of the test
 
     def measure_consumption(self):
         self.consumption_metrics["network_io_initial"] = self.get_localhostmetrics()
@@ -262,8 +276,31 @@ class energyMeter(object):
     def calculate_consumption(self):
         self.consumption_metrics["thread_execution_time"] = time.time() - self.consumption_metrics["thread_start_time"]
 
-    def print_consumption_results(self):
+    def print_consumption_results(self, testname):
         consumptions = self.get_consumption()
+
+        if self.summary:
+            headers = [testname,""]
+            alignments = ["left", "right"]
+            rows = [
+                    ["🌱 Energy Consumption Results", f"{consumptions['total_consumption']:.2f} Ws 🌱"],
+                    ["Frontend", ""],
+                    ["💻 Browser CPU Consumption", f"{consumptions['browser_cpu_consumption']:.2f} Ws"],
+                    [f"💭 Browser Memory Consumption", f"{consumptions['browser_memory_consumption']:.2f} Ws"],
+                    ["Backend",""], ]
+
+
+            if self.node_process:
+                rows.append([f"💻 Node CPU Consumption", f"{consumptions['backend_cpu_consumption']:.2f} Ws"])
+                rows.append([f"💭 Node Memory Consumption", f"{consumptions['backend_memory_consumption']:.2f} Ws"])
+            if self.tomcat_process:
+                rows.append([f"💻 TomCat CPU Consumption", f"{consumptions['backend_cpu_consumption']:.2f} Ws"])
+                rows.append([f"💭 TomCat Memory Consumption", f"{consumptions['backend_memory_consumption']:.2f} Ws"])
+            self.summary.table(headers, rows, alignments)
+
+
+            with open(self._output, "w", encoding="utf-8") as f:
+                f.write(self.summary.getvalue())
 
         # Print the results
         print("")

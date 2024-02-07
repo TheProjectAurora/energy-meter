@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import patch, mock_open, MagicMock, Mock
 from energyMeter import energyMeter
-import json
 import psutil
 
 

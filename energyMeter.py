@@ -53,10 +53,7 @@ class energyMeter(object):
         if self._output and MDGen:
             self.summary = MDGen()
             self._output = Path(self._output)
-            try:
-                self._output.unlink()
-            except:
-                pass
+            self._output.unlink(missing_ok=True)
 
     def load_configs(self):
         config_file = Path(__file__).resolve().parent / "energyMeterConfig.json"
@@ -287,16 +284,16 @@ class energyMeter(object):
                     ["🌱 Energy Consumption Results", f"{consumptions['total_consumption']:.2f} Ws 🌱"],
                     ["Frontend", ""],
                     ["💻 Browser CPU Consumption", f"{consumptions['browser_cpu_consumption']:.2f} Ws"],
-                    [f"💭 Browser Memory Consumption", f"{consumptions['browser_memory_consumption']:.2f} Ws"],
+                    ["💭 Browser Memory Consumption", f"{consumptions['browser_memory_consumption']:.2f} Ws"],
                     ["Backend",""], ]
 
 
             if self.node_process:
-                rows.append([f"💻 Node CPU Consumption", f"{consumptions['backend_cpu_consumption']:.2f} Ws"])
-                rows.append([f"💭 Node Memory Consumption", f"{consumptions['backend_memory_consumption']:.2f} Ws"])
+                rows.append(["💻 Node CPU Consumption", f"{consumptions['backend_cpu_consumption']:.2f} Ws"])
+                rows.append(["💭 Node Memory Consumption", f"{consumptions['backend_memory_consumption']:.2f} Ws"])
             if self.tomcat_process:
-                rows.append([f"💻 TomCat CPU Consumption", f"{consumptions['backend_cpu_consumption']:.2f} Ws"])
-                rows.append([f"💭 TomCat Memory Consumption", f"{consumptions['backend_memory_consumption']:.2f} Ws"])
+                rows.append(["💻 TomCat CPU Consumption", f"{consumptions['backend_cpu_consumption']:.2f} Ws"])
+                rows.append(["💭 TomCat Memory Consumption", f"{consumptions['backend_memory_consumption']:.2f} Ws"])
             self.summary.table(headers, rows, alignments)
 
 

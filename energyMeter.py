@@ -61,8 +61,7 @@ class energyMeter(object):
     def load_configs(self):
         config_file = Path(__file__).resolve().parent / "energyMeterConfig.json"
         try:
-            with open(config_file, "r", encoding="utf-8") as f:
-                self.config = json.loads(f.read())
+            self.config = json.loads(config_file.read_text())
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Error loading configs from {config_file}: {e}")
             self.config = {

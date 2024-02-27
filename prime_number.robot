@@ -8,8 +8,8 @@ Test Teardown   Click  id=resetButton
 ${SERVER}                    nodejs
 ${URL}                       http://localhost:3000/
 ${HEADLESS}                  ${FALSE}
-${AMOUNT OF PRIMENUMBERS}    100
-${LAST PRIMENUMBER}          541
+${AMOUNT OF PRIMENUMBERS}    2000
+${LAST PRIMENUMBER}          17389
 
 * Test Cases *
 Get x number of first primenumbers with single fetch

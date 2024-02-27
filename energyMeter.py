@@ -378,7 +378,6 @@ class energyMeter(object):
         return sum(usage) / len(usage) if usage else 0
 
     def get_network_consumption(self):
-        print(self.consumption_metrics)
         bytes_sent = (
             self.consumption_metrics["network_io_final"].bytes_sent - self.consumption_metrics["network_io_initial"].bytes_sent
         )

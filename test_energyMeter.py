@@ -1,7 +1,6 @@
 import unittest
-from unittest.mock import patch, mock_open, MagicMock, Mock
+from unittest.mock import patch, MagicMock, Mock
 from energyMeter import energyMeter
-import json
 import psutil
 
 
@@ -11,7 +10,8 @@ class TestEnergyMeter(unittest.TestCase):
 
     def test_load_configs_success(self):
         mock_data = '{"processor": {"i7-8650U": 50, "DEFAULT": 100.0}, "ram": {"ddr4": 2}, "network": 1}'
-        with patch('builtins.open', mock_open(read_data=mock_data)):
+        with patch("pathlib.Path.read_text", autospec=True) as mock_read:
+            mock_read.side_effect = lambda self, *args, **kwargs: mock_data
             self.energy_meter.load_configs()
             self.assertEqual(self.energy_meter.config['processor']['i7-8650U'], 50)
 

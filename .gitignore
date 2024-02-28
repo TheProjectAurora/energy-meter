@@ -13,5 +13,6 @@ playwright-log.txt
 .settings/
 .idea/
 *.iml
+*apache-tomcat*
 .DS_Store # for macOS
 Thumbs.db  # for Windows

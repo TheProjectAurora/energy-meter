@@ -16,3 +16,4 @@ playwright-log.txt
 *apache-tomcat*
 .DS_Store # for macOS
 Thumbs.db  # for Windows
+mandelbrot.png

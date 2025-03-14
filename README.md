@@ -73,3 +73,12 @@ At the end of the test execution, the script prints out a detailed report of the
 
 ## Contributing
 Contributions to enhance energyCalculator.py are welcome. Please submit your pull requests or issues to the repository.
+
+# Standalone version
+
+Standalone version can be run without Robot Framework integration.
+
+## Usage Example
+
+python3 standaloneEnergyMeter.py --pid 90968 --duration 20 --interval 0.5
+
